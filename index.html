@@ -6,7 +6,6 @@
 <title>QR Generator</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -28,70 +27,43 @@ body::before{
   background-size:40px 40px;pointer-events:none;z-index:0;
 }
 .wrapper{position:relative;z-index:1;width:100%;max-width:1060px;margin:0 auto;}
-
 header{margin-bottom:1.75rem;}
 .tag{font-size:.6rem;letter-spacing:.25em;color:var(--accent);text-transform:uppercase;margin-bottom:.4rem;}
 h1{font-family:'Syne',sans-serif;font-size:clamp(1.6rem,3.5vw,2.6rem);font-weight:800;line-height:1;letter-spacing:-.02em;}
 h1 span{color:var(--accent);}
-
 .layout{display:grid;grid-template-columns:1fr 300px;gap:1.25rem;align-items:start;}
-
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:.85rem;}
-.card:last-child{margin-bottom:0;}
 .card-title{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
 .card-title::after{content:'';flex:1;height:1px;background:var(--border);}
-
-/* Tabs */
 .tabs{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.25rem;}
-.tab-btn{
-  flex:1;background:transparent;border:none;border-right:1px solid var(--border);
-  color:var(--muted);font-family:'Space Mono',monospace;font-size:.58rem;
-  letter-spacing:.1em;text-transform:uppercase;padding:.5rem .2rem;cursor:pointer;transition:.15s;
-}
+.tab-btn{flex:1;background:transparent;border:none;border-right:1px solid var(--border);color:var(--muted);font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .2rem;cursor:pointer;transition:.15s;}
 .tab-btn:last-child{border-right:none;}
 .tab-btn.active{background:var(--accent);color:#0a0a0a;font-weight:700;}
-
 .panel{display:none;}.panel.active{display:block;}
-
 label{display:block;font-size:.6rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:.4rem;}
-input[type=text],input[type=tel],input[type=email],input[type=url],input[type=number],select,textarea{
-  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
-  color:var(--text);font-family:'Space Mono',monospace;font-size:.8rem;
-  padding:.55rem .75rem;outline:none;transition:border-color .2s;resize:none;
-}
+input[type=text],input[type=tel],input[type=email],input[type=url],input[type=number],select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-family:'Space Mono',monospace;font-size:.8rem;padding:.55rem .75rem;outline:none;transition:border-color .2s;resize:none;}
 input:focus,select:focus,textarea:focus{border-color:var(--accent);}
 input::placeholder,textarea::placeholder{color:var(--muted);}
 .field{margin-bottom:.75rem;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;}
 .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem;}
-
-/* Color */
 .color-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;margin-bottom:.75rem;}
 .color-field{display:flex;flex-direction:column;gap:.4rem;}
 input[type=color]{width:100%;height:2.2rem;padding:.15rem .35rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;outline:none;}
 input[type=color]:focus{border-color:var(--accent);}
 
-/* Shape pickers */
-.shape-section-label{font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem;}
+/* Shape grid */
 .shape-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.45rem;margin-bottom:.85rem;}
-.shape-opt{
-  display:flex;flex-direction:column;align-items:center;gap:.35rem;
-  padding:.5rem .2rem;border:1px solid var(--border);border-radius:var(--radius);
-  cursor:pointer;transition:.12s;background:var(--bg);
-}
+.shape-opt{display:flex;flex-direction:column;align-items:center;gap:.35rem;padding:.5rem .2rem;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:.12s;background:var(--bg);}
 .shape-opt:hover{border-color:#444;}
-.shape-opt.selected{border-color:var(--accent);background:#161600;}
+.shape-opt.sel{border-color:var(--accent);background:#161600;}
 .shape-opt svg{width:26px;height:26px;color:var(--text);}
-.shape-opt.selected svg{color:var(--accent);}
+.shape-opt.sel svg{color:var(--accent);}
 .shape-opt span{font-size:.5rem;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;text-align:center;line-height:1.2;}
-.shape-opt.selected span{color:var(--accent);}
+.shape-opt.sel span{color:var(--accent);}
 
-/* Logo upload */
-.logo-area{
-  border:1px dashed var(--border);border-radius:var(--radius);
-  padding:1rem;text-align:center;cursor:pointer;transition:.15s;
-  position:relative;margin-bottom:.75rem;
-}
+/* Logo */
+.logo-area{border:1px dashed var(--border);border-radius:var(--radius);padding:1rem;text-align:center;cursor:pointer;transition:.15s;position:relative;margin-bottom:.75rem;}
 .logo-area:hover{border-color:var(--muted);}
 .logo-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
 .logo-area p{font-size:.65rem;color:var(--muted);pointer-events:none;}
@@ -100,18 +72,11 @@ input[type=color]:focus{border-color:var(--accent);}
 .logo-size-row{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.75rem;}
 
 /* Buttons */
-.btn{
-  display:flex;align-items:center;justify-content:center;gap:.4rem;
-  background:var(--accent);color:#0a0a0a;border:none;border-radius:var(--radius);
-  font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;
-  letter-spacing:.08em;text-transform:uppercase;padding:.65rem 1rem;
-  cursor:pointer;transition:.12s;white-space:nowrap;width:100%;
-}
+.btn{display:flex;align-items:center;justify-content:center;gap:.4rem;background:var(--accent);color:#0a0a0a;border:none;border-radius:var(--radius);font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.65rem 1rem;cursor:pointer;transition:.12s;white-space:nowrap;width:100%;}
 .btn:hover{background:#d4eb3c;}.btn:active{transform:scale(.97);}
 .btn-outline{background:transparent;color:var(--text);border:1px solid var(--border);margin-top:.45rem;}
 .btn-outline:hover{border-color:var(--accent);color:var(--accent);background:transparent;}
 .btn-sm{padding:.45rem .7rem;font-size:.62rem;}
-
 .status{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);text-align:center;min-height:1.1em;margin-top:.65rem;}
 .err{color:var(--accent2)!important;}
 
@@ -119,314 +84,277 @@ input[type=color]:focus{border-color:var(--accent);}
 .preview-panel{position:sticky;top:1.5rem;}
 .preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;display:flex;flex-direction:column;align-items:center;gap:.85rem;}
 #qr-svg-wrap{background:#fff;padding:1rem;border-radius:2px;display:inline-block;position:relative;}
-#qr-svg-out svg{display:block;}
 .corner{position:absolute;width:9px;height:9px;border-color:var(--accent);border-style:solid;}
 .corner-tl{top:-1px;left:-1px;border-width:2px 0 0 2px;}
 .corner-tr{top:-1px;right:-1px;border-width:2px 2px 0 0;}
 .corner-bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;}
 .corner-br{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
 .preview-actions{display:flex;flex-direction:column;gap:.4rem;width:100%;}
-
 footer{margin-top:1.75rem;text-align:center;font-size:.58rem;color:var(--muted);letter-spacing:.1em;}
-
-/* WiFi enc select */
 select option{background:#111;}
-
-@media(max-width:700px){
-  .layout{grid-template-columns:1fr;}
-  .preview-panel{position:static;}
-  .color-row{grid-template-columns:1fr 1fr;}
-  .shape-grid{grid-template-columns:repeat(4,1fr);}
-}
+@media(max-width:700px){.layout{grid-template-columns:1fr;}.preview-panel{position:static;}.color-row{grid-template-columns:1fr 1fr;}}
 </style>
 </head>
 <body>
 <div class="wrapper">
-  <header>
-    <p class="tag">// утилита v2</p>
-    <h1>QR <span>генератор</span></h1>
-  </header>
+<header>
+  <p class="tag">// утилита v3</p>
+  <h1>QR <span>генератор</span></h1>
+</header>
 
-  <div class="layout">
-  <!-- ===== LEFT ===== -->
-  <div>
+<div class="layout">
+<!-- LEFT -->
+<div>
 
-    <!-- MODE TABS -->
-    <div class="card">
-      <p class="card-title">Контент</p>
-      <div class="tabs">
-        <button class="tab-btn active" onclick="switchTab('text')">URL / Текст</button>
-        <button class="tab-btn" onclick="switchTab('contact')">Контакт</button>
-        <button class="tab-btn" onclick="switchTab('wifi')">WiFi</button>
-        <button class="tab-btn" onclick="switchTab('location')">Место</button>
-      </div>
+<!-- CONTENT -->
+<div class="card">
+  <p class="card-title">Контент</p>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('text')">URL / Текст</button>
+    <button class="tab-btn" onclick="switchTab('contact')">Контакт</button>
+    <button class="tab-btn" onclick="switchTab('wifi')">WiFi</button>
+    <button class="tab-btn" onclick="switchTab('location')">Место</button>
+  </div>
 
-      <!-- TEXT -->
-      <div class="panel active" id="panel-text">
-        <div class="field">
-          <label>Текст или URL</label>
-          <input type="text" id="qr-input" placeholder="https://example.com" autocomplete="off"/>
-        </div>
-      </div>
-
-      <!-- CONTACT -->
-      <div class="panel" id="panel-contact">
-        <div class="row2">
-          <div class="field"><label>Имя</label><input type="text" id="vc-first" placeholder="Иван"/></div>
-          <div class="field"><label>Фамилия</label><input type="text" id="vc-last" placeholder="Иванов"/></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label>Компания</label><input type="text" id="vc-org" placeholder="ООО Ромашка"/></div>
-          <div class="field"><label>Должность</label><input type="text" id="vc-title-f" placeholder="Менеджер"/></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label>Телефон</label><input type="tel" id="vc-phone" placeholder="+7 900 000 00 00"/></div>
-          <div class="field"><label>Доп. тел.</label><input type="tel" id="vc-phone2" placeholder="+7 800…"/></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label>Email</label><input type="email" id="vc-email" placeholder="ivan@example.com"/></div>
-          <div class="field"><label>Сайт</label><input type="url" id="vc-url" placeholder="https://…"/></div>
-        </div>
-        <div class="field"><label>Адрес</label><input type="text" id="vc-addr" placeholder="Москва, ул. Примерная, 1"/></div>
-        <div class="field"><label>Заметка</label><input type="text" id="vc-note" placeholder="Любой текст"/></div>
-      </div>
-
-      <!-- WIFI -->
-      <div class="panel" id="panel-wifi">
-        <div class="field"><label>Название сети (SSID)</label><input type="text" id="wifi-ssid" placeholder="MyNetwork"/></div>
-        <div class="row2">
-          <div class="field">
-            <label>Шифрование</label>
-            <select id="wifi-enc">
-              <option value="WPA">WPA / WPA2</option>
-              <option value="WEP">WEP</option>
-              <option value="">Без пароля</option>
-            </select>
-          </div>
-          <div class="field"><label>Пароль</label><input type="text" id="wifi-pass" placeholder="password123"/></div>
-        </div>
-        <div class="field" style="display:flex;align-items:center;gap:.5rem;margin-bottom:0">
-          <input type="checkbox" id="wifi-hidden" style="width:auto;margin:0"/>
-          <label for="wifi-hidden" style="margin:0;cursor:pointer">Скрытая сеть</label>
-        </div>
-      </div>
-
-      <!-- LOCATION -->
-      <div class="panel" id="panel-location">
-        <div class="row2">
-          <div class="field"><label>Широта</label><input type="number" id="loc-lat" placeholder="55.7558" step="any"/></div>
-          <div class="field"><label>Долгота</label><input type="number" id="loc-lng" placeholder="37.6173" step="any"/></div>
-        </div>
-        <div class="field"><label>Название места (опционально)</label><input type="text" id="loc-name" placeholder="Красная площадь"/></div>
-        <button class="btn btn-outline btn-sm" onclick="getGeoLocation()" style="margin-top:0;margin-bottom:.75rem">
-          ◎ Определить моё местоположение
-        </button>
-        <p style="font-size:.62rem;color:var(--muted);line-height:1.5;">При сканировании откроется Google Maps по координатам.</p>
-      </div>
-    </div>
-
-    <!-- COLORS -->
-    <div class="card">
-      <p class="card-title">Цвета</p>
-      <div class="color-row">
-        <div class="color-field"><label>Модули</label><input type="color" id="qr-dark" value="#000000" oninput="liveUpdate()"/></div>
-        <div class="color-field"><label>Фон</label><input type="color" id="qr-light" value="#ffffff" oninput="liveUpdate()"/></div>
-        <div class="color-field"><label>Рамка ☰</label><input type="color" id="qr-eye-outer" value="#000000" oninput="liveUpdate()"/></div>
-        <div class="color-field"><label>Центр ☰</label><input type="color" id="qr-eye-inner" value="#000000" oninput="liveUpdate()"/></div>
-      </div>
-    </div>
-
-    <!-- SHAPES -->
-    <div class="card">
-      <p class="card-title">Форма модулей</p>
-      <div class="shape-grid" id="sg-body">
-        <div class="shape-opt selected" data-v="square" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><rect x="1" y="1" width="10" height="10"/><rect x="15" y="1" width="10" height="10"/><rect x="1" y="15" width="10" height="10"/><rect x="15" y="15" width="10" height="10"/></svg><span>Квадрат</span></div>
-        <div class="shape-opt" data-v="rounded" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><rect x="1" y="1" width="10" height="10" rx="3"/><rect x="15" y="1" width="10" height="10" rx="3"/><rect x="1" y="15" width="10" height="10" rx="3"/><rect x="15" y="15" width="10" height="10" rx="3"/></svg><span>Скругл.</span></div>
-        <div class="shape-opt" data-v="dot" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><circle cx="6" cy="6" r="5"/><circle cx="20" cy="6" r="5"/><circle cx="6" cy="20" r="5"/><circle cx="20" cy="20" r="5"/></svg><span>Точка</span></div>
-        <div class="shape-opt" data-v="diamond" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="6,1 11,6 6,11 1,6"/><polygon points="20,1 25,6 20,11 15,6"/><polygon points="6,15 11,20 6,25 1,20"/><polygon points="20,15 25,20 20,25 15,20"/></svg><span>Ромб</span></div>
-        <div class="shape-opt" data-v="star" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="6,1 7.5,4.5 11,4.5 8.5,7 9.5,11 6,8.5 2.5,11 3.5,7 1,4.5 4.5,4.5"/><polygon points="20,1 21.5,4.5 25,4.5 22.5,7 23.5,11 20,8.5 16.5,11 17.5,7 15,4.5 18.5,4.5"/><polygon points="6,15 7.5,18.5 11,18.5 8.5,21 9.5,25 6,22.5 2.5,25 3.5,21 1,18.5 4.5,18.5"/><polygon points="20,15 21.5,18.5 25,18.5 22.5,21 23.5,25 20,22.5 16.5,25 17.5,21 15,18.5 18.5,18.5"/></svg><span>Звезда</span></div>
-        <div class="shape-opt" data-v="cross" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><path d="M4,1h4v3h3v4H8v3H4V8H1V4h3Z"/><path d="M18,1h4v3h3v4h-3v3h-4V8h-3V4h3Z"/><path d="M4,15h4v3h3v4H8v3H4v-3H1v-4h3Z"/><path d="M18,15h4v3h3v4h-3v3h-4v-3h-3v-4h3Z"/></svg><span>Крест</span></div>
-        <div class="shape-opt" data-v="vertical" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><rect x="3" y="1" width="6" height="11" rx="3"/><rect x="17" y="1" width="6" height="11" rx="3"/><rect x="3" y="14" width="6" height="11" rx="3"/><rect x="17" y="14" width="6" height="11" rx="3"/></svg><span>Пилюля ↕</span></div>
-        <div class="shape-opt" data-v="horizontal" onclick="pick('body',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><rect x="1" y="3" width="11" height="6" rx="3"/><rect x="14" y="3" width="11" height="6" rx="3"/><rect x="1" y="17" width="11" height="6" rx="3"/><rect x="14" y="17" width="11" height="6" rx="3"/></svg><span>Пилюля ↔</span></div>
-      </div>
-    </div>
-
-    <!-- EYE OUTER -->
-    <div class="card">
-      <p class="card-title">Форма рамки уголков</p>
-      <div class="shape-grid" id="sg-eo">
-        <div class="shape-opt selected" data-v="square" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="22" height="22"/></svg><span>Квадрат</span></div>
-        <div class="shape-opt" data-v="rounded" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="22" height="22" rx="6"/></svg><span>Скругл.</span></div>
-        <div class="shape-opt" data-v="circle" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="13" cy="13" r="10"/></svg><span>Круг</span></div>
-        <div class="shape-opt" data-v="leaf" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 Q2,24 24,24 Q24,2 2,2Z"/></svg><span>Лист ↘</span></div>
-        <div class="shape-opt" data-v="leaf2" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24,2 Q2,2 2,24 Q24,24 24,2Z"/></svg><span>Лист ↙</span></div>
-        <div class="shape-opt" data-v="sharp-tr" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 L24,2 L24,24 Q2,24 2,2Z"/></svg><span>Угол →↓</span></div>
-        <div class="shape-opt" data-v="sharp-tl" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 L24,2 Q24,24 2,24 L2,2Z"/></svg><span>Угол ←↓</span></div>
-        <div class="shape-opt" data-v="diamond" onclick="pick('eo',this)">
-          <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13,1 25,13 13,25 1,13"/></svg><span>Ромб</span></div>
-      </div>
-    </div>
-
-    <!-- EYE INNER -->
-    <div class="card">
-      <p class="card-title">Форма центра уголков</p>
-      <div class="shape-grid" id="sg-ei">
-        <div class="shape-opt selected" data-v="square" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><rect x="5" y="5" width="16" height="16"/></svg><span>Квадрат</span></div>
-        <div class="shape-opt" data-v="rounded" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><rect x="5" y="5" width="16" height="16" rx="5"/></svg><span>Скругл.</span></div>
-        <div class="shape-opt" data-v="circle" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><circle cx="13" cy="13" r="8"/></svg><span>Круг</span></div>
-        <div class="shape-opt" data-v="diamond" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="13,4 22,13 13,22 4,13"/></svg><span>Ромб</span></div>
-        <div class="shape-opt" data-v="star" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="13,3 15.5,9.5 22,9.5 17,14 19,20.5 13,17 7,20.5 9,14 4,9.5 10.5,9.5"/></svg><span>Звезда</span></div>
-        <div class="shape-opt" data-v="cross" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><path d="M10,4h6v6h6v6h-6v6h-6v-6H4v-6h6Z"/></svg><span>Крест</span></div>
-        <div class="shape-opt" data-v="leaf" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><path d="M5,5 Q5,21 21,21 Q21,5 5,5Z"/></svg><span>Лист</span></div>
-        <div class="shape-opt" data-v="triangle" onclick="pick('ei',this)">
-          <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="13,4 23,22 3,22"/></svg><span>Треугол.</span></div>
-      </div>
-    </div>
-
-    <!-- LOGO -->
-    <div class="card">
-      <p class="card-title">Логотип в центре</p>
-      <div class="logo-area" id="logo-drop">
-        <input type="file" accept="image/*" onchange="loadLogo(this)"/>
-        <img id="logo-preview" class="logo-preview" style="display:none"/>
-        <p id="logo-hint"><b>Нажми или перетащи</b> изображение<br><span style="font-size:.55rem">.png · .jpg · .svg · .gif — до 2 МБ</span></p>
-      </div>
-      <div id="logo-controls" style="display:none">
-        <div class="logo-size-row">
-          <div class="field">
-            <label>Размер лого (%)</label>
-            <input type="number" id="logo-size" value="20" min="5" max="35" oninput="liveUpdate()"/>
-          </div>
-          <div class="field">
-            <label>Фон за лого</label>
-            <input type="color" id="logo-bg" value="#ffffff" oninput="liveUpdate()"/>
-          </div>
-        </div>
-        <button class="btn btn-outline btn-sm" onclick="removeLogo()" style="margin-top:0">✕ Удалить логотип</button>
-      </div>
-      <p style="font-size:.58rem;color:var(--muted);margin-top:.65rem;line-height:1.5">Используй уровень коррекции H для лого — код останется читаемым.</p>
-    </div>
-
-    <!-- PARAMS -->
-    <div class="card">
-      <p class="card-title">Параметры</p>
-      <div class="row3">
-        <div class="field">
-          <label>Размер (px)</label>
-          <select id="qr-size">
-            <option value="200">200</option>
-            <option value="300" selected>300</option>
-            <option value="400">400</option>
-            <option value="600">600</option>
-            <option value="1000">1000</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Коррекция</label>
-          <select id="qr-ec">
-            <option value="L">L — 7%</option>
-            <option value="M" selected>M — 15%</option>
-            <option value="Q">Q — 25%</option>
-            <option value="H">H — 30%</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Тихая зона</label>
-          <select id="qr-quiet">
-            <option value="2">2 мод.</option>
-            <option value="4" selected>4 мод.</option>
-            <option value="6">6 мод.</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn" onclick="generate()">→ Создать QR-код</button>
-      <p class="status" id="status"></p>
-    </div>
-
-  </div><!-- /left -->
-
-  <!-- ===== RIGHT: preview ===== -->
-  <div class="preview-panel">
-    <div class="preview-card">
-      <p class="card-title" style="align-self:flex-start;width:100%">Превью</p>
-      <div id="qr-svg-wrap">
-        <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
-        <div class="corner corner-bl"></div><div class="corner corner-br"></div>
-        <div id="qr-svg-out">
-          <svg width="230" height="230" viewBox="0 0 230 230" xmlns="http://www.w3.org/2000/svg">
-            <rect width="230" height="230" fill="#fff"/>
-            <text x="115" y="122" text-anchor="middle" font-family="monospace" font-size="12" fill="#888">← заполни и нажми</text>
-          </svg>
-        </div>
-      </div>
-      <div class="preview-actions">
-        <button class="btn" onclick="downloadSVG()">↓ Скачать SVG</button>
-        <button class="btn btn-outline" onclick="downloadPNG()">↓ Скачать PNG</button>
-      </div>
+  <div class="panel active" id="panel-text">
+    <div class="field"><label>Текст или URL</label>
+      <input type="text" id="qr-input" placeholder="https://example.com" autocomplete="off"/>
     </div>
   </div>
 
-  </div><!-- /layout -->
-  <footer>QR Generator v2 · vCard 3.0 · WiFi · Geo · SVG · MIT</footer>
+  <div class="panel" id="panel-contact">
+    <div class="row2">
+      <div class="field"><label>Имя</label><input type="text" id="vc-first" placeholder="Иван"/></div>
+      <div class="field"><label>Фамилия</label><input type="text" id="vc-last" placeholder="Иванов"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Компания</label><input type="text" id="vc-org" placeholder="ООО Ромашка"/></div>
+      <div class="field"><label>Должность</label><input type="text" id="vc-title-f" placeholder="Менеджер"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Телефон</label><input type="tel" id="vc-phone" placeholder="+7 900 000 00 00"/></div>
+      <div class="field"><label>Доп. тел.</label><input type="tel" id="vc-phone2" placeholder="+7 800…"/></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Email</label><input type="email" id="vc-email" placeholder="ivan@example.com"/></div>
+      <div class="field"><label>Сайт</label><input type="url" id="vc-url" placeholder="https://…"/></div>
+    </div>
+    <div class="field"><label>Адрес</label><input type="text" id="vc-addr" placeholder="Москва, ул. Примерная, 1"/></div>
+    <div class="field"><label>Заметка</label><input type="text" id="vc-note" placeholder="Любой текст"/></div>
+  </div>
+
+  <div class="panel" id="panel-wifi">
+    <div class="field"><label>Название сети (SSID)</label><input type="text" id="wifi-ssid" placeholder="MyNetwork"/></div>
+    <div class="row2">
+      <div class="field"><label>Шифрование</label>
+        <select id="wifi-enc"><option value="WPA">WPA/WPA2</option><option value="WEP">WEP</option><option value="">Без пароля</option></select>
+      </div>
+      <div class="field"><label>Пароль</label><input type="text" id="wifi-pass" placeholder="password123"/></div>
+    </div>
+    <div class="field" style="display:flex;align-items:center;gap:.5rem;margin-bottom:0">
+      <input type="checkbox" id="wifi-hidden" style="width:auto;margin:0"/>
+      <label for="wifi-hidden" style="margin:0;cursor:pointer">Скрытая сеть</label>
+    </div>
+  </div>
+
+  <div class="panel" id="panel-location">
+    <div class="row2">
+      <div class="field"><label>Широта</label><input type="number" id="loc-lat" placeholder="55.7558" step="any"/></div>
+      <div class="field"><label>Долгота</label><input type="number" id="loc-lng" placeholder="37.6173" step="any"/></div>
+    </div>
+    <div class="field"><label>Название места (опционально)</label><input type="text" id="loc-name" placeholder="Красная площадь"/></div>
+    <button class="btn btn-outline btn-sm" onclick="getGeoLocation()" style="margin-top:0;margin-bottom:.75rem">◎ Определить моё местоположение</button>
+  </div>
+</div>
+
+<!-- COLORS -->
+<div class="card">
+  <p class="card-title">Цвета</p>
+  <div class="color-row">
+    <div class="color-field"><label>Модули</label><input type="color" id="qr-dark" value="#000000" oninput="liveUpdate()"/></div>
+    <div class="color-field"><label>Фон</label><input type="color" id="qr-light" value="#ffffff" oninput="liveUpdate()"/></div>
+    <div class="color-field"><label>Рамка маркера</label><input type="color" id="qr-eye-outer" value="#000000" oninput="liveUpdate()"/></div>
+    <div class="color-field"><label>Центр маркера</label><input type="color" id="qr-eye-inner" value="#000000" oninput="liveUpdate()"/></div>
+  </div>
+</div>
+
+<!-- BODY SHAPE -->
+<div class="card">
+  <p class="card-title">Форма области данных (модули)</p>
+  <div class="shape-grid" id="sg-body">
+    <div class="shape-opt sel" data-v="square" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><rect x="1" y="1" width="10" height="10"/><rect x="15" y="1" width="10" height="10"/><rect x="1" y="15" width="10" height="10"/><rect x="15" y="15" width="10" height="10"/></svg><span>Квадрат</span></div>
+    <div class="shape-opt" data-v="rounded" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><rect x="1" y="1" width="10" height="10" rx="3"/><rect x="15" y="1" width="10" height="10" rx="3"/><rect x="1" y="15" width="10" height="10" rx="3"/><rect x="15" y="15" width="10" height="10" rx="3"/></svg><span>Скругл.</span></div>
+    <div class="shape-opt" data-v="dot" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><circle cx="6" cy="6" r="5"/><circle cx="20" cy="6" r="5"/><circle cx="6" cy="20" r="5"/><circle cx="20" cy="20" r="5"/></svg><span>Круг</span></div>
+    <div class="shape-opt" data-v="diamond" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="6,1 11,6 6,11 1,6"/><polygon points="20,1 25,6 20,11 15,6"/><polygon points="6,15 11,20 6,25 1,20"/><polygon points="20,15 25,20 20,25 15,20"/></svg><span>Ромб</span></div>
+    <div class="shape-opt" data-v="star" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor">
+        <polygon points="6,1 7.2,4.2 10.5,4.2 8,6.4 8.9,9.8 6,7.8 3.1,9.8 4,6.4 1.5,4.2 4.8,4.2"/>
+        <polygon points="20,1 21.2,4.2 24.5,4.2 22,6.4 22.9,9.8 20,7.8 17.1,9.8 18,6.4 15.5,4.2 18.8,4.2"/>
+        <polygon points="6,15 7.2,18.2 10.5,18.2 8,20.4 8.9,23.8 6,21.8 3.1,23.8 4,20.4 1.5,18.2 4.8,18.2"/>
+        <polygon points="20,15 21.2,18.2 24.5,18.2 22,20.4 22.9,23.8 20,21.8 17.1,23.8 18,20.4 15.5,18.2 18.8,18.2"/>
+      </svg><span>Звезда</span></div>
+    <div class="shape-opt" data-v="cross" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor">
+        <path d="M4,1h3v3h3v3H7v3H4V7H1V4h3Z"/>
+        <path d="M18,1h3v3h3v3h-3v3h-3V7h-3V4h3Z"/>
+        <path d="M4,15h3v3h3v3H7v3H4v-3H1v-3h3Z"/>
+        <path d="M18,15h3v3h3v3h-3v3h-3v-3h-3v-3h3Z"/>
+      </svg><span>Крест</span></div>
+    <div class="shape-opt" data-v="vertical" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><rect x="3" y="1" width="6" height="11" rx="3"/><rect x="17" y="1" width="6" height="11" rx="3"/><rect x="3" y="14" width="6" height="11" rx="3"/><rect x="17" y="14" width="6" height="11" rx="3"/></svg><span>Пилюля ↕</span></div>
+    <div class="shape-opt" data-v="horizontal" onclick="pick('body',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><rect x="1" y="3" width="11" height="6" rx="3"/><rect x="14" y="3" width="11" height="6" rx="3"/><rect x="1" y="17" width="11" height="6" rx="3"/><rect x="14" y="17" width="11" height="6" rx="3"/></svg><span>Пилюля ↔</span></div>
+  </div>
+</div>
+
+<!-- EYE OUTER -->
+<div class="card">
+  <p class="card-title">Форма рамки поисковых маркеров</p>
+  <div class="shape-grid" id="sg-eo">
+    <div class="shape-opt sel" data-v="square" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="2" width="22" height="22"/></svg><span>Квадрат</span></div>
+    <div class="shape-opt" data-v="rounded" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="3"><rect x="2" y="2" width="22" height="22" rx="6"/></svg><span>Скругл.</span></div>
+    <div class="shape-opt" data-v="circle" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="3"><circle cx="13" cy="13" r="10"/></svg><span>Круг</span></div>
+    <div class="shape-opt" data-v="leaf" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 Q2,24 24,24 Q24,2 2,2Z"/></svg><span>Лист ↘</span></div>
+    <div class="shape-opt" data-v="leaf2" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M24,2 Q2,2 2,24 Q24,24 24,2Z"/></svg><span>Лист ↙</span></div>
+    <div class="shape-opt" data-v="sharp-tr" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 L24,2 L24,24 Q2,24 2,2Z"/></svg><span>Угол ↗</span></div>
+    <div class="shape-opt" data-v="sharp-tl" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 L24,2 Q24,24 2,24 L2,2Z"/></svg><span>Угол ↖</span></div>
+    <div class="shape-opt" data-v="diamond" onclick="pick('eo',this)">
+      <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13,1 25,13 13,25 1,13"/></svg><span>Ромб</span></div>
+  </div>
+</div>
+
+<!-- EYE INNER -->
+<div class="card">
+  <p class="card-title">Форма центра поисковых маркеров</p>
+  <div class="shape-grid" id="sg-ei">
+    <div class="shape-opt sel" data-v="square" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><rect x="5" y="5" width="16" height="16"/></svg><span>Квадрат</span></div>
+    <div class="shape-opt" data-v="rounded" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><rect x="5" y="5" width="16" height="16" rx="5"/></svg><span>Скругл.</span></div>
+    <div class="shape-opt" data-v="circle" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><circle cx="13" cy="13" r="8"/></svg><span>Круг</span></div>
+    <div class="shape-opt" data-v="diamond" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="13,4 22,13 13,22 4,13"/></svg><span>Ромб</span></div>
+    <div class="shape-opt" data-v="star" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="13,3 15.5,9.5 22,9.5 17,14 19,20.5 13,17 7,20.5 9,14 4,9.5 10.5,9.5"/></svg><span>Звезда</span></div>
+    <div class="shape-opt" data-v="cross" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><path d="M10,4h6v6h6v6h-6v6h-6v-6H4v-6h6Z"/></svg><span>Крест</span></div>
+    <div class="shape-opt" data-v="leaf" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><path d="M5,5 Q5,21 21,21 Q21,5 5,5Z"/></svg><span>Лист</span></div>
+    <div class="shape-opt" data-v="triangle" onclick="pick('ei',this)">
+      <svg viewBox="0 0 26 26" fill="currentColor"><polygon points="13,4 23,22 3,22"/></svg><span>Треугол.</span></div>
+  </div>
+</div>
+
+<!-- LOGO -->
+<div class="card">
+  <p class="card-title">Логотип в центре</p>
+  <div class="logo-area" id="logo-drop">
+    <input type="file" accept="image/*" onchange="loadLogo(this)"/>
+    <img id="logo-preview" class="logo-preview" style="display:none"/>
+    <p id="logo-hint"><b>Нажми или перетащи</b> изображение<br><span style="font-size:.55rem">.png · .jpg · .svg — до 2 МБ</span></p>
+  </div>
+  <div id="logo-controls" style="display:none">
+    <div class="logo-size-row">
+      <div class="field"><label>Размер лого (%)</label><input type="number" id="logo-size" value="20" min="5" max="35" oninput="liveUpdate()"/></div>
+      <div class="field"><label>Фон за лого</label><input type="color" id="logo-bg" value="#ffffff" oninput="liveUpdate()"/></div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="removeLogo()" style="margin-top:0">✕ Удалить логотип</button>
+  </div>
+  <p style="font-size:.58rem;color:var(--muted);margin-top:.65rem;line-height:1.5">Рекомендуется уровень коррекции H при использовании лого.</p>
+</div>
+
+<!-- PARAMS -->
+<div class="card">
+  <p class="card-title">Параметры</p>
+  <div class="row3">
+    <div class="field"><label>Размер (px)</label>
+      <select id="qr-size"><option value="200">200</option><option value="300" selected>300</option><option value="400">400</option><option value="600">600</option><option value="1000">1000</option></select>
+    </div>
+    <div class="field"><label>Коррекция</label>
+      <select id="qr-ec"><option value="L">L — 7%</option><option value="M" selected>M — 15%</option><option value="Q">Q — 25%</option><option value="H">H — 30%</option></select>
+    </div>
+    <div class="field"><label>Тихая зона</label>
+      <select id="qr-quiet"><option value="2">2 мод.</option><option value="4" selected>4 мод.</option><option value="6">6 мод.</option></select>
+    </div>
+  </div>
+  <button class="btn" onclick="generate()">→ Создать QR-код</button>
+  <p class="status" id="status"></p>
+</div>
+
+</div><!-- /left -->
+
+<!-- RIGHT: preview -->
+<div class="preview-panel">
+  <div class="preview-card">
+    <p class="card-title" style="align-self:flex-start;width:100%">Превью</p>
+    <div id="qr-svg-wrap">
+      <div class="corner corner-tl"></div><div class="corner corner-tr"></div>
+      <div class="corner corner-bl"></div><div class="corner corner-br"></div>
+      <div id="qr-svg-out">
+        <svg width="230" height="230" viewBox="0 0 230 230" xmlns="http://www.w3.org/2000/svg">
+          <rect width="230" height="230" fill="#fff"/>
+          <text x="115" y="122" text-anchor="middle" font-family="monospace" font-size="12" fill="#aaa">← заполни и нажми</text>
+        </svg>
+      </div>
+    </div>
+    <div class="preview-actions">
+      <button class="btn" onclick="downloadSVG()">↓ Скачать SVG</button>
+      <button class="btn btn-outline" onclick="downloadPNG()">↓ Скачать PNG</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /layout -->
+<footer>QR Generator v3 · vCard 3.0 · WiFi · Geo · SVG render · MIT</footer>
 </div>
 
 <canvas id="export-canvas" style="display:none"></canvas>
 
 <script>
-// ─── State ───────────────────────────────────────────────
-const S = { body:'square', eo:'square', ei:'square' };
+// ── State ──────────────────────────────────────────────────────────
+const SHP = { body:'square', eo:'square', ei:'square' };
 let lastMatrix = null;
 let logoDataUrl = null;
+let lastSvg = '';
 
-// ─── Tab ─────────────────────────────────────────────────
+// ── Tabs ───────────────────────────────────────────────────────────
 function switchTab(tab) {
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    b.classList.toggle('active',['text','contact','wifi','location'][i]===tab);
-  });
-  ['text','contact','wifi','location'].forEach(id=>{
-    document.getElementById('panel-'+id).classList.toggle('active',id===tab);
-  });
+  const ids = ['text','contact','wifi','location'];
+  document.querySelectorAll('.tab-btn').forEach((b,i) =>
+    b.classList.toggle('active', ids[i] === tab));
+  ids.forEach(id =>
+    document.getElementById('panel-'+id).classList.toggle('active', id === tab));
   setStatus('');
 }
 
-// ─── Shape picker ─────────────────────────────────────────
+// ── Shape picker ───────────────────────────────────────────────────
 function pick(type, el) {
-  const mapId = {body:'sg-body', eo:'sg-eo', ei:'sg-ei'};
-  document.querySelectorAll('#'+mapId[type]+' .shape-opt').forEach(o=>o.classList.remove('selected'));
-  el.classList.add('selected');
-  S[type] = el.dataset.v;
+  const grid = {body:'sg-body', eo:'sg-eo', ei:'sg-ei'}[type];
+  document.querySelectorAll('#'+grid+' .shape-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  SHP[type] = el.dataset.v;
   liveUpdate();
 }
 
-// ─── Logo ─────────────────────────────────────────────────
+// ── Logo ───────────────────────────────────────────────────────────
 function loadLogo(input) {
-  const file = input.files[0];
-  if(!file) return;
-  if(file.size > 2*1024*1024) { setStatus('Файл больше 2 МБ', true); return; }
-  const reader = new FileReader();
-  reader.onload = e => {
+  const f = input.files[0];
+  if (!f) return;
+  if (f.size > 2*1024*1024) { setStatus('Файл больше 2 МБ', true); return; }
+  const r = new FileReader();
+  r.onload = e => {
     logoDataUrl = e.target.result;
     document.getElementById('logo-preview').src = logoDataUrl;
     document.getElementById('logo-preview').style.display = 'block';
@@ -434,7 +362,7 @@ function loadLogo(input) {
     document.getElementById('logo-controls').style.display = 'block';
     liveUpdate();
   };
-  reader.readAsDataURL(file);
+  r.readAsDataURL(f);
 }
 function removeLogo() {
   logoDataUrl = null;
@@ -444,20 +372,16 @@ function removeLogo() {
   liveUpdate();
 }
 
-// ─── Content builders ─────────────────────────────────────
-function buildText() {
-  const t = document.getElementById('qr-input').value.trim();
-  return t || null;
-}
+// ── Content builders ───────────────────────────────────────────────
+function buildText() { return document.getElementById('qr-input').value.trim() || null; }
+
 function buildVCard() {
-  const v=id=>document.getElementById(id).value.trim();
+  const v = id => document.getElementById(id).value.trim();
   const first=v('vc-first'),last=v('vc-last'),org=v('vc-org'),title=v('vc-title-f');
-  const phone=v('vc-phone'),phone2=v('vc-phone2'),email=v('vc-email');
-  const url=v('vc-url'),addr=v('vc-addr'),note=v('vc-note');
-  if(!first&&!last&&!phone&&!email) return null;
-  const fn=[first,last].filter(Boolean).join(' ');
+  const phone=v('vc-phone'),phone2=v('vc-phone2'),email=v('vc-email'),url=v('vc-url'),addr=v('vc-addr'),note=v('vc-note');
+  if (!first&&!last&&!phone&&!email) return null;
   let c='BEGIN:VCARD\r\nVERSION:3.0\r\n';
-  c+=`N:${last};${first};;;\r\nFN:${fn}\r\n`;
+  c+=`N:${last};${first};;;\r\nFN:${[first,last].filter(Boolean).join(' ')}\r\n`;
   if(org)    c+=`ORG:${org}\r\n`;
   if(title)  c+=`TITLE:${title}\r\n`;
   if(phone)  c+=`TEL;TYPE=CELL:${phone}\r\n`;
@@ -466,296 +390,366 @@ function buildVCard() {
   if(url)    c+=`URL:${url}\r\n`;
   if(addr)   c+=`ADR;TYPE=WORK:;;${addr};;;;\r\n`;
   if(note)   c+=`NOTE:${note}\r\n`;
-  c+='END:VCARD';
-  return c;
+  return c+'END:VCARD';
 }
+
 function buildWifi() {
   const ssid=document.getElementById('wifi-ssid').value.trim();
-  if(!ssid) return null;
+  if (!ssid) return null;
   const enc=document.getElementById('wifi-enc').value;
   const pass=document.getElementById('wifi-pass').value;
   const hidden=document.getElementById('wifi-hidden').checked;
   const esc=s=>s.replace(/[\\;,"]/g,'\\$&');
   return `WIFI:T:${enc};S:${esc(ssid)};${enc?'P:'+esc(pass)+';':''}${hidden?'H:true;':''}`;
 }
+
 function buildLocation() {
   const lat=document.getElementById('loc-lat').value.trim();
   const lng=document.getElementById('loc-lng').value.trim();
-  if(!lat||!lng) return null;
+  if (!lat||!lng) return null;
   const name=document.getElementById('loc-name').value.trim();
   return `https://maps.google.com/?q=${lat},${lng}${name?'&query='+encodeURIComponent(name):''}`;
 }
 
-function getActiveText() {
-  const panels=['text','contact','wifi','location'];
-  const active=panels.find(p=>document.getElementById('panel-'+p).classList.contains('active'))||'text';
+function getActiveContent() {
+  const active=['text','contact','wifi','location']
+    .find(p=>document.getElementById('panel-'+p).classList.contains('active'))||'text';
   switch(active){
-    case 'contact':  return {text:buildVCard(),  label:'vCard'};
-    case 'wifi':     return {text:buildWifi(),   label:'WiFi'};
+    case 'contact':  return {text:buildVCard(),   label:'vCard'};
+    case 'wifi':     return {text:buildWifi(),    label:'WiFi'};
     case 'location': return {text:buildLocation(),label:'Geo'};
-    default:         return {text:buildText(),   label:'URL'};
+    default:         return {text:buildText(),    label:'URL'};
   }
 }
 
-// ─── Geolocation ──────────────────────────────────────────
+// ── Geolocation ────────────────────────────────────────────────────
 function getGeoLocation() {
-  if(!navigator.geolocation){setStatus('Геолокация не поддерживается',true);return;}
+  if (!navigator.geolocation) { setStatus('Геолокация не поддерживается', true); return; }
   setStatus('Определяю позицию…');
-  navigator.geolocation.getCurrentPosition(pos=>{
-    document.getElementById('loc-lat').value=pos.coords.latitude.toFixed(6);
-    document.getElementById('loc-lng').value=pos.coords.longitude.toFixed(6);
-    setStatus('Позиция получена');
-  },()=>setStatus('Нет доступа к геолокации',true));
+  navigator.geolocation.getCurrentPosition(
+    p => { document.getElementById('loc-lat').value=p.coords.latitude.toFixed(6);
+            document.getElementById('loc-lng').value=p.coords.longitude.toFixed(6);
+            setStatus('Позиция получена'); },
+    () => setStatus('Нет доступа к геолокации', true));
 }
 
-// ─── QR Matrix via qrcodejs ────────────────────────────────
-function getMatrix(text, ec) {
-  const div=document.createElement('div');
-  div.style.cssText='position:absolute;visibility:hidden;pointer-events:none';
-  document.body.appendChild(div);
+// ── QR matrix ─────────────────────────────────────────────────────
+// Uses qrcodejs to render to canvas, then reads pixel matrix
+function getMatrix(text, ecLevel) {
+  const tmp = document.createElement('div');
+  tmp.style.cssText = 'position:fixed;left:-9999px;top:-9999px;visibility:hidden;';
+  document.body.appendChild(tmp);
   try {
-    new QRCode(div,{text,width:512,height:512,correctLevel:QRCode.CorrectLevel[ec]});
-    const canvas=div.querySelector('canvas');
-    if(!canvas) return null;
-    const ctx=canvas.getContext('2d');
-    const sz=canvas.width;
-    const data=ctx.getImageData(0,0,sz,sz).data;
-    // detect module size by scanning first row for first dark pixel
-    let mod=1;
-    for(let x=0;x<sz;x++){
-      if(data[x*4]<128){mod=x;break;}
+    new QRCode(tmp, { text, width:512, height:512,
+      correctLevel: QRCode.CorrectLevel[ecLevel] });
+    const canvas = tmp.querySelector('canvas');
+    if (!canvas) return null;
+    const ctx = canvas.getContext('2d');
+    const W = canvas.width; // 512
+    const pixels = ctx.getImageData(0,0,W,W).data;
+
+    // Find module size: scan along Y=0 looking for first dark col,
+    // then count how many consecutive dark pixels = 1 module
+    const isDark = (x,y) => pixels[(y*W+x)*4] < 128;
+
+    // Scan center row to find first dark pixel (skip quiet zone)
+    let firstDark = -1;
+    for (let x=0; x<W; x++) {
+      if (isDark(x, W>>1)) { firstDark=x; break; }
     }
-    if(mod<1)mod=1;
-    const N=Math.round(sz/mod);
-    const m=[];
-    for(let r=0;r<N;r++){
-      m[r]=[];
-      for(let c=0;c<N;c++){
-        const px=Math.min(Math.floor(c*mod+mod/2),sz-1);
-        const py=Math.min(Math.floor(r*mod+mod/2),sz-1);
-        m[r][c]=data[(py*sz+px)*4]<128;
+    if (firstDark < 0) return null;
+
+    // Count width of first dark run = 1 module
+    let runEnd = firstDark;
+    while (runEnd < W && isDark(runEnd, W>>1)) runEnd++;
+    const modPx = runEnd - firstDark; // pixels per module
+
+    // Quiet zone in pixels
+    const qPx = firstDark;
+
+    // QR data starts at qPx, module size modPx
+    // Number of modules = (W - 2*qPx) / modPx
+    const N = Math.round((W - 2*qPx) / modPx);
+
+    const matrix = [];
+    for (let r=0; r<N; r++) {
+      matrix[r] = [];
+      for (let c=0; c<N; c++) {
+        // Sample center of module
+        const px = Math.round(qPx + c*modPx + modPx/2);
+        const py = Math.round(qPx + r*modPx + modPx/2);
+        matrix[r][c] = isDark(Math.min(px,W-1), Math.min(py,W-1));
       }
     }
-    return m;
-  } finally { document.body.removeChild(div); }
-}
-
-// ─── Eye detection ────────────────────────────────────────
-function isEye(r,c,N){ return (r<7&&c<7)||(r<7&&c>N-8)||(r>N-8&&c<7); }
-function eyeCorner(r,c,N){
-  if(r<7&&c<7)    return 'tl';
-  if(r<7&&c>N-8)  return 'tr';
-  if(r>N-8&&c<7)  return 'bl';
-  return null;
-}
-
-// ─── Body module path ─────────────────────────────────────
-function bodyPath(x,y,s,shape){
-  const h=s/2,r3=s*0.32,r5=s*0.5;
-  switch(shape){
-    case 'rounded':
-      return `M${x+r3},${y}h${s-2*r3}q${r3},0,${r3},${r3}v${s-2*r3}q0,${r3},-${r3},${r3}h-${s-2*r3}q-${r3},0,-${r3},-${r3}v-${s-2*r3}q0,-${r3},${r3},-${r3}Z`;
-    case 'dot':
-      return `M${x+h},${y}a${h},${h},0,1,1,-0.01,0Z`;
-    case 'diamond':
-      return `M${x+h},${y}L${x+s},${y+h}L${x+h},${y+s}L${x},${y+h}Z`;
-    case 'star': return starD(x+h,y+h,h*0.92,h*0.38,5);
-    case 'cross':{const t=s*.32,u=(s-t)/2;return `M${x+u},${y}h${t}v${u}h${u}v${t}h-${u}v${u}h-${t}v-${u}h-${u}v-${t}h${u}Z`;}
-    case 'vertical':{const rv=h*0.9;return `M${x+h},${y}q${h},0,${h},${rv}v${s-2*rv}q0,${rv},-${h},${rv}q-${h},0,-${h},-${rv}v-${s-2*rv}q0,-${rv},${h},-${rv}Z`;}
-    case 'horizontal':{const rh=h*0.9;return `M${x},${y+h}q0,-${h},${rh},-${h}h${s-2*rh}q${rh},0,${rh},${h}q0,${h},-${rh},${h}h-${s-2*rh}q-${rh},0,-${rh},-${h}Z`;}
-    default: return `M${x},${y}h${s}v${s}h-${s}Z`;
+    return matrix;
+  } finally {
+    document.body.removeChild(tmp);
   }
 }
-function starD(cx,cy,R,r,n){
+
+// ── Eye detection (finder patterns = 7×7 in top-left, top-right, bottom-left) ──
+function isFinderPattern(r, c, N) {
+  return (r < 7 && c < 7) ||          // top-left
+         (r < 7 && c >= N-7) ||       // top-right
+         (r >= N-7 && c < 7);         // bottom-left
+}
+
+// ── SVG path helpers ───────────────────────────────────────────────
+function rrect(x,y,w,h,r) {
+  return `M${x+r},${y}h${w-2*r}q${r},0,${r},${r}v${h-2*r}q0,${r},-${r},${r}h-${w-2*r}q-${r},0,-${r},-${r}v-${h-2*r}q0,-${r},${r},-${r}Z`;
+}
+
+function starD(cx,cy,R,r,n) {
   let d='';
-  for(let i=0;i<n*2;i++){
-    const a=Math.PI/n*i-Math.PI/2;
-    const rad=i%2===0?R:r;
-    d+=(i?'L':'M')+(cx+rad*Math.cos(a))+','+(cy+rad*Math.sin(a));
+  for (let i=0;i<n*2;i++) {
+    const a = Math.PI/n*i - Math.PI/2;
+    const rad = i%2===0 ? R : r;
+    d += (i?'L':'M')+(cx+rad*Math.cos(a)).toFixed(3)+','+(cy+rad*Math.sin(a)).toFixed(3);
   }
   return d+'Z';
 }
 
-// ─── Eye outer path (7×7 block, with inner hole) ──────────
-function eyeOuterPath(ox,oy,cell,shape){
-  const S=7*cell,b=cell,inner=5*cell;
-  const ro=cell*1.5,ri=cell*0.85;
-  switch(shape){
-    case 'rounded':{
-      const o=rrect(ox,oy,S,S,ro);
-      const h=rrect(ox+b,oy+b,inner,inner,ri);
-      return o+' '+h;
+// ── Body module shape ──────────────────────────────────────────────
+function bodyPath(x, y, s, shape) {
+  const h=s/2, r=s*0.33;
+  switch(shape) {
+    case 'rounded':
+      return rrect(x,y,s,s,r);
+    case 'dot':
+      return `M${x+h},${y}a${h},${h},0,1,1,-0.01,0Z`;
+    case 'diamond':
+      return `M${x+h},${y}L${x+s},${y+h}L${x+h},${y+s}L${x},${y+h}Z`;
+    case 'star':
+      return starD(x+h, y+h, h*0.95, h*0.4, 5);
+    case 'cross': {
+      const t=s*0.33, u=(s-t)/2;
+      return `M${x+u},${y}h${t}v${u}h${u}v${t}h-${u}v${u}h-${t}v-${u}h-${u}v-${t}h${u}Z`;
     }
-    case 'circle':{
-      const R=S/2,r=inner/2;
-      return `M${ox+R},${oy}a${R},${R},0,1,1,-0.01,0Z M${ox+b+r},${oy+b}a${r},${r},0,1,1,-0.01,0Z`;
+    case 'vertical': {
+      const rv=h*0.9;
+      return `M${x+h},${y}q${h},0,${h},${rv}v${s-2*rv}q0,${rv},-${h},${rv}q-${h},0,-${h},-${rv}v-${s-2*rv}q0,-${rv},${h},-${rv}Z`;
     }
-    case 'leaf':{
-      const o=`M${ox},${oy}Q${ox},${oy+S} ${ox+S},${oy+S}Q${ox+S},${oy} ${ox},${oy}Z`;
-      const h=`M${ox+b},${oy+b}Q${ox+b},${oy+b+inner} ${ox+b+inner},${oy+b+inner}Q${ox+b+inner},${oy+b} ${ox+b},${oy+b}Z`;
-      return o+' '+h;
+    case 'horizontal': {
+      const rh=h*0.9;
+      return `M${x},${y+h}q0,-${h},${rh},-${h}h${s-2*rh}q${rh},0,${rh},${h}q0,${h},-${rh},${h}h-${s-2*rh}q-${rh},0,-${rh},-${h}Z`;
     }
-    case 'leaf2':{
-      const o=`M${ox+S},${oy}Q${ox},${oy} ${ox},${oy+S}Q${ox+S},${oy+S} ${ox+S},${oy}Z`;
-      const h=`M${ox+b+inner},${oy+b}Q${ox+b},${oy+b} ${ox+b},${oy+b+inner}Q${ox+b+inner},${oy+b+inner} ${ox+b+inner},${oy+b}Z`;
-      return o+' '+h;
+    default: // square
+      return `M${x},${y}h${s}v${s}h-${s}Z`;
+  }
+}
+
+// ── Finder pattern outer ring path ─────────────────────────────────
+// ox,oy = top-left corner of 7×7 eye, cell = SVG units per module
+function finderOuterPath(ox, oy, cell, shape) {
+  const S = 7*cell;         // outer size
+  const b = cell;           // border width
+  const I = 5*cell;         // inner hole size
+  const ro = cell*1.5;      // outer corner radius
+  const ri = cell*0.8;      // inner hole corner radius
+
+  switch(shape) {
+    case 'rounded': {
+      const outer = rrect(ox,oy,S,S,ro);
+      const hole  = rrect(ox+b,oy+b,I,I,ri);
+      return outer+' '+hole;
     }
-    case 'sharp-tr':{
-      const o=`M${ox},${oy}L${ox+S},${oy}L${ox+S},${oy+S}Q${ox},${oy+S} ${ox},${oy}Z`;
-      const h=`M${ox+b},${oy+b}L${ox+b+inner},${oy+b}L${ox+b+inner},${oy+b+inner}Q${ox+b},${oy+b+inner} ${ox+b},${oy+b}Z`;
-      return o+' '+h;
+    case 'circle': {
+      const R=S/2, r=I/2;
+      return `M${ox+R},${oy}a${R},${R},0,1,1,-0.01,0Z `+
+             `M${ox+b+r},${oy+b}a${r},${r},0,1,1,-0.01,0Z`;
     }
-    case 'sharp-tl':{
-      const o=`M${ox},${oy}L${ox+S},${oy}Q${ox+S},${oy+S} ${ox},${oy+S}L${ox},${oy}Z`;
-      const h=`M${ox+b},${oy+b}L${ox+b+inner},${oy+b}Q${ox+b+inner},${oy+b+inner} ${ox+b},${oy+b+inner}L${ox+b},${oy+b}Z`;
-      return o+' '+h;
+    case 'leaf': {
+      const outer=`M${ox},${oy}Q${ox},${oy+S} ${ox+S},${oy+S}Q${ox+S},${oy} ${ox},${oy}Z`;
+      const hole =`M${ox+b},${oy+b}Q${ox+b},${oy+b+I} ${ox+b+I},${oy+b+I}Q${ox+b+I},${oy+b} ${ox+b},${oy+b}Z`;
+      return outer+' '+hole;
     }
-    case 'diamond':{
-      const h2=S/2,ih=inner/2;
-      const o=`M${ox+h2},${oy}L${ox+S},${oy+h2}L${ox+h2},${oy+S}L${ox},${oy+h2}Z`;
-      const h=`M${ox+h2},${oy+b}L${ox+S-b},${oy+h2}L${ox+h2},${oy+S-b}L${ox+b},${oy+h2}Z`;
-      return o+' '+h;
+    case 'leaf2': {
+      const ox2=ox+S, ib2=ox+b+I;
+      const outer=`M${ox2},${oy}Q${ox},${oy} ${ox},${oy+S}Q${ox2},${oy+S} ${ox2},${oy}Z`;
+      const hole =`M${ib2},${oy+b}Q${ox+b},${oy+b} ${ox+b},${oy+b+I}Q${ib2},${oy+b+I} ${ib2},${oy+b}Z`;
+      return outer+' '+hole;
     }
-    default:{ // square
-      return `M${ox},${oy}h${S}v${S}h-${S}Z M${ox+b},${oy+b}h${inner}v${inner}h-${inner}Z`;
+    case 'sharp-tr': {
+      const outer=`M${ox},${oy}L${ox+S},${oy}L${ox+S},${oy+S}Q${ox},${oy+S} ${ox},${oy}Z`;
+      const hole =`M${ox+b},${oy+b}L${ox+b+I},${oy+b}L${ox+b+I},${oy+b+I}Q${ox+b},${oy+b+I} ${ox+b},${oy+b}Z`;
+      return outer+' '+hole;
+    }
+    case 'sharp-tl': {
+      const outer=`M${ox},${oy}L${ox+S},${oy}Q${ox+S},${oy+S} ${ox},${oy+S}L${ox},${oy}Z`;
+      const hole =`M${ox+b},${oy+b}L${ox+b+I},${oy+b}Q${ox+b+I},${oy+b+I} ${ox+b},${oy+b+I}L${ox+b},${oy+b}Z`;
+      return outer+' '+hole;
+    }
+    case 'diamond': {
+      const h2=S/2;
+      const outer=`M${ox+h2},${oy}L${ox+S},${oy+h2}L${ox+h2},${oy+S}L${ox},${oy+h2}Z`;
+      const hole =`M${ox+h2},${oy+b}L${ox+S-b},${oy+h2}L${ox+h2},${oy+S-b}L${ox+b},${oy+h2}Z`;
+      return outer+' '+hole;
+    }
+    default: { // square
+      const outer=`M${ox},${oy}h${S}v${S}h-${S}Z`;
+      const hole =`M${ox+b},${oy+b}h${I}v${I}h-${I}Z`;
+      return outer+' '+hole;
     }
   }
 }
-function rrect(x,y,w,h,r){
-  return `M${x+r},${y}h${w-2*r}q${r},0,${r},${r}v${h-2*r}q0,${r},-${r},${r}h-${w-2*r}q-${r},0,-${r},-${r}v-${h-2*r}q0,-${r},${r},-${r}Z`;
-}
 
-// ─── Eye inner path (3×3 at offset 2) ────────────────────
-function eyeInnerPath(ox,oy,cell,shape){
-  const ix=ox+2*cell,iy=oy+2*cell,S=3*cell,h=S/2;
-  switch(shape){
-    case 'rounded': return rrect(ix,iy,S,S,cell*0.7);
+// ── Finder pattern inner dot path ──────────────────────────────────
+// inner 3×3 square starts at offset 2*cell from eye origin
+function finderInnerPath(ox, oy, cell, shape) {
+  const ix=ox+2*cell, iy=oy+2*cell, S=3*cell, h=S/2;
+  switch(shape) {
+    case 'rounded': return rrect(ix,iy,S,S,cell*0.75);
     case 'circle':  return `M${ix+h},${iy}a${h},${h},0,1,1,-0.01,0Z`;
     case 'diamond': return `M${ix+h},${iy}L${ix+S},${iy+h}L${ix+h},${iy+S}L${ix},${iy+h}Z`;
-    case 'star':    return starD(ix+h,iy+h,h*0.92,h*0.38,5);
-    case 'cross':{const t=S*.35,u=(S-t)/2;return `M${ix+u},${iy}h${t}v${u}h${u}v${t}h-${u}v${u}h-${t}v-${u}h-${u}v-${t}h${u}Z`;}
-    case 'leaf':    return `M${ix},${iy}Q${ix},${iy+S} ${ix+S},${iy+S}Q${ix+S},${iy} ${ix},${iy}Z`;
-    case 'triangle':return `M${ix+h},${iy}L${ix+S},${iy+S}L${ix},${iy+S}Z`;
-    default:        return `M${ix},${iy}h${S}v${S}h-${S}Z`;
+    case 'star':    return starD(ix+h,iy+h,h*0.95,h*0.4,5);
+    case 'cross': {
+      const t=S*0.36,u=(S-t)/2;
+      return `M${ix+u},${iy}h${t}v${u}h${u}v${t}h-${u}v${u}h-${t}v-${u}h-${u}v-${t}h${u}Z`;
+    }
+    case 'leaf':     return `M${ix},${iy}Q${ix},${iy+S} ${ix+S},${iy+S}Q${ix+S},${iy} ${ix},${iy}Z`;
+    case 'triangle': return `M${ix+h},${iy}L${ix+S},${iy+S}L${ix},${iy+S}Z`;
+    default:         return `M${ix},${iy}h${S}v${S}h-${S}Z`;
   }
 }
 
-// ─── Eye positions ────────────────────────────────────────
-function eyeOrigins(N){ return [{r:0,c:0},{r:0,c:N-7},{r:N-7,c:0}]; }
+// ── Finder pattern origins (module coords) ─────────────────────────
+function finderOrigins(N) {
+  return [ {r:0,c:0}, {r:0,c:N-7}, {r:N-7,c:0} ];
+}
 
-// ─── SVG render ───────────────────────────────────────────
-function renderSVG(matrix, embedLogo) {
-  const N=matrix.length;
-  const cell=10;
-  const quiet=parseInt(document.getElementById('qr-quiet').value)*cell;
-  const total=N*cell+2*quiet;
-  const dark  = document.getElementById('qr-dark').value;
-  const light = document.getElementById('qr-light').value;
-  const eoCol = document.getElementById('qr-eye-outer').value;
-  const eiCol = document.getElementById('qr-eye-inner').value;
+// ── Full SVG render ────────────────────────────────────────────────
+function renderSVG(matrix) {
+  const N     = matrix.length;
+  const cell  = 10; // SVG units per module
+  const quiet = parseInt(document.getElementById('qr-quiet').value) * cell;
+  const total = N*cell + 2*quiet;
 
-  const eyes = eyeOrigins(N);
+  const dark    = document.getElementById('qr-dark').value;
+  const light   = document.getElementById('qr-light').value;
+  const eoColor = document.getElementById('qr-eye-outer').value;
+  const eiColor = document.getElementById('qr-eye-inner').value;
 
-  // body
-  let bodyD='';
-  for(let r=0;r<N;r++){
-    for(let c=0;c<N;c++){
-      if(!matrix[r][c]||isEye(r,c,N)) continue;
-      bodyD+=bodyPath(quiet+c*cell,quiet+r*cell,cell,S.body)+' ';
+  // ── Body: all dark modules that are NOT finder pattern ──
+  let bodyD = '';
+  for (let r=0; r<N; r++) {
+    for (let c=0; c<N; c++) {
+      if (!matrix[r][c]) continue;
+      if (isFinderPattern(r,c,N)) continue;
+      bodyD += bodyPath(quiet+c*cell, quiet+r*cell, cell, SHP.body) + ' ';
     }
   }
 
-  // eyes
-  let eyePaths='';
-  for(const {r,c} of eyes){
-    const ox=quiet+c*cell, oy=quiet+r*cell;
-    eyePaths+=`<path d="${eyeOuterPath(ox,oy,cell,S.eo)}" fill="${eoCol}" fill-rule="evenodd"/>`;
-    eyePaths+=`<path d="${eyeInnerPath(ox,oy,cell,S.ei)}" fill="${eiCol}"/>`;
+  // ── Finder patterns ──
+  let eyeSVG = '';
+  for (const {r,c} of finderOrigins(N)) {
+    const ox = quiet + c*cell;
+    const oy = quiet + r*cell;
+    eyeSVG += `<path d="${finderOuterPath(ox,oy,cell,SHP.eo)}" fill="${eoColor}" fill-rule="evenodd"/>`;
+    eyeSVG += `<path d="${finderInnerPath(ox,oy,cell,SHP.ei)}" fill="${eiColor}"/>`;
   }
 
-  // logo
-  let logoEl='';
-  if(embedLogo&&logoDataUrl){
-    const pct=Math.min(35,Math.max(5,parseInt(document.getElementById('logo-size').value)||20));
-    const logoSize=total*pct/100;
-    const lx=(total-logoSize)/2, ly=(total-logoSize)/2;
-    const pad=logoSize*0.12;
-    const bgColor=document.getElementById('logo-bg').value;
-    logoEl=`<rect x="${lx-pad}" y="${ly-pad}" width="${logoSize+pad*2}" height="${logoSize+pad*2}" rx="${pad}" fill="${bgColor}"/>
-    <image href="${embedLogo}" x="${lx}" y="${ly}" width="${logoSize}" height="${logoSize}" preserveAspectRatio="xMidYMid meet"/>`;
+  // ── Logo ──
+  let logoSVG = '';
+  if (logoDataUrl) {
+    const pct  = Math.min(35, Math.max(5, parseInt(document.getElementById('logo-size').value)||20));
+    const lsz  = total * pct / 100;
+    const lx   = (total-lsz)/2;
+    const ly   = (total-lsz)/2;
+    const pad  = lsz*0.15;
+    const bgc  = document.getElementById('logo-bg').value;
+    logoSVG = `<rect x="${lx-pad}" y="${ly-pad}" width="${lsz+pad*2}" height="${lsz+pad*2}" rx="${pad}" fill="${bgc}"/>
+    <image href="${logoDataUrl}" x="${lx}" y="${ly}" width="${lsz}" height="${lsz}" preserveAspectRatio="xMidYMid meet"/>`;
   }
 
   return `<svg width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" shape-rendering="geometricPrecision">
   <rect width="${total}" height="${total}" fill="${light}"/>
-  <path d="${bodyD}" fill="${dark}" fill-rule="nonzero"/>
-  ${eyePaths}
-  ${logoEl}
+  <path d="${bodyD.trim()}" fill="${dark}" fill-rule="nonzero"/>
+  ${eyeSVG}
+  ${logoSVG}
 </svg>`;
 }
 
-// ─── Generate ─────────────────────────────────────────────
-let lastSvg='';
+// ── Generate ───────────────────────────────────────────────────────
 function generate() {
-  const {text,label} = getActiveText();
-  if(!text){setStatus('// нет данных для кодирования',true);return;}
+  const {text, label} = getActiveContent();
+  if (!text) { setStatus('// нет данных для кодирования', true); return; }
+
   const ec = document.getElementById('qr-ec').value;
-  const m = getMatrix(text, ec);
-  if(!m){setStatus('// ошибка генерации матрицы',true);return;}
-  lastMatrix=m;
-  doRender();
-  setStatus(`// готово · ${label} · ${m.length}×${m.length} модулей`);
+  setStatus('Генерирую…');
+
+  // Defer so status updates before heavy work
+  setTimeout(() => {
+    const m = getMatrix(text, ec);
+    if (!m) { setStatus('// ошибка чтения матрицы QR', true); return; }
+    lastMatrix = m;
+    doRender();
+    setStatus(`// готово · ${label} · ${m.length}×${m.length} модулей`);
+  }, 10);
 }
 
-function doRender(){
-  if(!lastMatrix) return;
-  const svg = renderSVG(lastMatrix, logoDataUrl);
-  lastSvg=svg;
-  const out=document.getElementById('qr-svg-out');
-  out.innerHTML=svg;
-  const el=out.querySelector('svg');
-  if(el){
-    const nat=parseInt(el.getAttribute('width'));
-    const s=Math.min(230/nat,1);
-    el.style.width=el.style.height=(nat*s)+'px';
+// ── Render (called on every visual change) ─────────────────────────
+function doRender() {
+  if (!lastMatrix) return;
+  const svg = renderSVG(lastMatrix);
+  lastSvg = svg;
+
+  const out = document.getElementById('qr-svg-out');
+  out.innerHTML = svg;
+  // Scale preview to ~230px
+  const el = out.querySelector('svg');
+  if (el) {
+    const nat = parseInt(el.getAttribute('width'));
+    const scale = Math.min(230/nat, 1);
+    el.style.width = el.style.height = (nat*scale)+'px';
   }
 }
 
-function liveUpdate(){ if(lastMatrix) doRender(); }
-
-// ─── Status ───────────────────────────────────────────────
-function setStatus(msg,err){
-  const el=document.getElementById('status');
-  el.textContent=msg;
-  el.className='status'+(err?' err':'');
+function liveUpdate() {
+  if (lastMatrix) doRender();
 }
 
-// ─── Download ─────────────────────────────────────────────
-function downloadSVG(){
-  if(!lastSvg) return;
-  const size=parseInt(document.getElementById('qr-size').value);
-  const out=lastSvg.replace(/width="\d+" height="\d+"/,`width="${size}" height="${size}"`);
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([out],{type:'image/svg+xml'}));
-  a.download='qrcode.svg';a.click();
+// ── Status ─────────────────────────────────────────────────────────
+function setStatus(msg, err) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (err ? ' err' : '');
 }
-function downloadPNG(){
-  if(!lastSvg) return;
-  const size=parseInt(document.getElementById('qr-size').value);
-  const out=lastSvg.replace(/width="\d+" height="\d+"/,`width="${size}" height="${size}"`);
-  const url=URL.createObjectURL(new Blob([out],{type:'image/svg+xml'}));
-  const img=new Image();
-  img.onload=()=>{
-    const c=document.getElementById('export-canvas');
-    c.width=size;c.height=size;
+
+// ── Download SVG ───────────────────────────────────────────────────
+function downloadSVG() {
+  if (!lastSvg) { setStatus('Сначала создайте QR', true); return; }
+  const size = parseInt(document.getElementById('qr-size').value);
+  const out  = lastSvg.replace(/width="\d+" height="\d+"/, `width="${size}" height="${size}"`);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([out], {type:'image/svg+xml'}));
+  a.download = 'qrcode.svg';
+  a.click();
+}
+
+// ── Download PNG ───────────────────────────────────────────────────
+function downloadPNG() {
+  if (!lastSvg) { setStatus('Сначала создайте QR', true); return; }
+  const size = parseInt(document.getElementById('qr-size').value);
+  const out  = lastSvg.replace(/width="\d+" height="\d+"/, `width="${size}" height="${size}"`);
+  const url  = URL.createObjectURL(new Blob([out], {type:'image/svg+xml'}));
+  const img  = new Image();
+  img.onload = () => {
+    const c = document.getElementById('export-canvas');
+    c.width = size; c.height = size;
     c.getContext('2d').drawImage(img,0,0,size,size);
     URL.revokeObjectURL(url);
-    const a=document.createElement('a');a.download='qrcode.png';a.href=c.toDataURL('image/png');a.click();
+    const a = document.createElement('a');
+    a.download = 'qrcode.png';
+    a.href = c.toDataURL('image/png');
+    a.click();
   };
-  img.src=url;
+  img.src = url;
 }
 
-// ─── Keyboard shortcut ───────────────────────────────────
-document.getElementById('qr-input').addEventListener('keydown',e=>{if(e.key==='Enter')generate();});
+// ── Enter shortcut ─────────────────────────────────────────────────
+document.getElementById('qr-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') generate();
+});
 </script>
 </body>
 </html>
