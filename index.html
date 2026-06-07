@@ -1,549 +1,687 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Generator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>QR Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0a0a0a;--surface:#111;--border:#2a2a2a;
+  --accent:#e8ff47;--accent2:#ff4757;
+  --text:#f0f0f0;--muted:#555;--radius:4px;
+}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Space Mono',monospace;
+  min-height:100vh;display:grid;place-items:start center;
+  padding:2rem 1rem;position:relative;overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(232,255,71,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(232,255,71,.04) 1px,transparent 1px);
+  background-size:40px 40px;pointer-events:none;z-index:0;
+}
+.wrapper{position:relative;z-index:1;width:100%;max-width:960px;margin:0 auto;}
 
-    :root {
-      --bg:      #0a0a0a;
-      --surface: #111111;
-      --border:  #2a2a2a;
-      --accent:  #e8ff47;
-      --accent2: #ff4757;
-      --text:    #f0f0f0;
-      --muted:   #666;
-      --radius:  4px;
-    }
+/* Layout: sidebar + preview */
+.layout{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;align-items:start;}
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Space Mono', monospace;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 2rem 1rem;
-      position: relative;
-      overflow-x: hidden;
-    }
+header{margin-bottom:2rem;}
+.tag{font-size:.65rem;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin-bottom:.5rem;}
+h1{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1;letter-spacing:-.02em;}
+h1 span{color:var(--accent);}
 
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(232,255,71,.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(232,255,71,.04) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
-    }
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1rem;}
+.card-title{font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:1.25rem;}
 
-    .wrapper {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 560px;
-    }
+/* Tabs */
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.tab-btn{
+  flex:1;background:transparent;border:none;border-right:1px solid var(--border);
+  color:var(--muted);font-family:'Space Mono',monospace;font-size:.65rem;
+  letter-spacing:.1em;text-transform:uppercase;padding:.55rem .3rem;cursor:pointer;transition:.15s;
+}
+.tab-btn:last-child{border-right:none;}
+.tab-btn.active{background:var(--accent);color:#0a0a0a;font-weight:700;}
 
-    header { margin-bottom: 2.5rem; }
+.panel{display:none;}.panel.active{display:block;}
 
-    .tag {
-      font-size: .65rem;
-      letter-spacing: .2em;
-      color: var(--accent);
-      text-transform: uppercase;
-      margin-bottom: .5rem;
-    }
+label{display:block;font-size:.65rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase;margin-bottom:.45rem;}
+input[type=text],input[type=tel],input[type=email],input[type=url],select{
+  width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);
+  color:var(--text);font-family:'Space Mono',monospace;font-size:.82rem;
+  padding:.65rem .85rem;outline:none;transition:border-color .2s;
+}
+input:focus,select:focus{border-color:var(--accent);}
+input::placeholder{color:var(--muted);}
+.field{margin-bottom:.85rem;}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
 
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2rem, 6vw, 3.2rem);
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -.02em;
-    }
+/* Color inputs */
+.color-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.85rem;}
+.color-field{display:flex;flex-direction:column;gap:.45rem;}
+input[type=color]{width:100%;height:2.4rem;padding:.2rem .4rem;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;outline:none;}
+input[type=color]:focus{border-color:var(--accent);}
 
-    h1 span { color: var(--accent); }
+/* Shape selectors */
+.shape-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin-bottom:.85rem;}
+.shape-opt{
+  display:flex;flex-direction:column;align-items:center;gap:.4rem;
+  padding:.6rem .3rem;border:1px solid var(--border);border-radius:var(--radius);
+  cursor:pointer;transition:.15s;background:var(--bg);
+}
+.shape-opt:hover{border-color:var(--muted);}
+.shape-opt.selected{border-color:var(--accent);background:#1a1a00;}
+.shape-opt svg{width:28px;height:28px;}
+.shape-opt span{font-size:.55rem;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;text-align:center;}
+.shape-opt.selected span{color:var(--accent);}
 
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 2rem;
-      margin-bottom: 1.5rem;
-    }
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  background:var(--accent);color:#0a0a0a;border:none;border-radius:var(--radius);
+  font-family:'Space Mono',monospace;font-size:.78rem;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;padding:.7rem 1.2rem;
+  cursor:pointer;transition:.15s;white-space:nowrap;width:100%;
+}
+.btn:hover{background:#d4eb3c;}.btn:active{transform:scale(.97);}
+.btn-outline{
+  background:transparent;color:var(--text);border:1px solid var(--border);margin-top:.5rem;
+}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:transparent;}
 
-    /* ── Tabs ── */
-    .tabs {
-      display: flex;
-      gap: 0;
-      margin-bottom: 1.75rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-    }
+.status{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);text-align:center;min-height:1.2em;margin-top:.75rem;}
 
-    .tab-btn {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-family: 'Space Mono', monospace;
-      font-size: .72rem;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      padding: .65rem .5rem;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-      border-right: 1px solid var(--border);
-    }
+/* Preview panel */
+.preview-panel{position:sticky;top:2rem;}
+.preview-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:1rem;}
+#qr-svg-wrap{
+  background:#fff;padding:1.2rem;border-radius:2px;
+  display:inline-block;position:relative;
+}
+#qr-svg-wrap svg{display:block;}
+.corner{position:absolute;width:10px;height:10px;border-color:var(--accent);border-style:solid;}
+.corner-tl{top:-1px;left:-1px;border-width:2px 0 0 2px;}
+.corner-tr{top:-1px;right:-1px;border-width:2px 2px 0 0;}
+.corner-bl{bottom:-1px;left:-1px;border-width:0 0 2px 2px;}
+.corner-br{bottom:-1px;right:-1px;border-width:0 2px 2px 0;}
+.preview-actions{display:flex;flex-direction:column;gap:.5rem;width:100%;}
 
-    .tab-btn:last-child { border-right: none; }
+footer{margin-top:2rem;text-align:center;font-size:.62rem;color:var(--muted);letter-spacing:.1em;}
 
-    .tab-btn.active {
-      background: var(--accent);
-      color: #0a0a0a;
-      font-weight: 700;
-    }
-
-    /* ── Panels ── */
-    .panel { display: none; }
-    .panel.active { display: block; }
-
-    /* ── Inputs ── */
-    label {
-      display: block;
-      font-size: .7rem;
-      letter-spacing: .15em;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: .5rem;
-    }
-
-    .input-row {
-      display: flex;
-      gap: .75rem;
-      align-items: stretch;
-      margin-bottom: 1.5rem;
-    }
-
-    input[type="text"],
-    input[type="tel"],
-    input[type="email"],
-    input[type="url"] {
-      flex: 1;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: 'Space Mono', monospace;
-      font-size: .85rem;
-      padding: .75rem 1rem;
-      outline: none;
-      transition: border-color .2s;
-      width: 100%;
-    }
-
-    input[type="text"]:focus,
-    input[type="tel"]:focus,
-    input[type="email"]:focus,
-    input[type="url"]:focus { border-color: var(--accent); }
-
-    input::placeholder { color: var(--muted); }
-
-    /* vCard grid */
-    .vcard-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .85rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .vcard-grid .full { grid-column: 1 / -1; }
-
-    .field { display: flex; flex-direction: column; gap: .5rem; }
-
-    /* options row */
-    .options {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      padding-top: 1.25rem;
-      border-top: 1px solid var(--border);
-    }
-
-    select, input[type="color"] {
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      color: var(--text);
-      font-family: 'Space Mono', monospace;
-      font-size: .8rem;
-      padding: .65rem .9rem;
-      outline: none;
-      cursor: pointer;
-      transition: border-color .2s;
-    }
-
-    select:focus, input[type="color"]:focus { border-color: var(--accent); }
-
-    input[type="color"] {
-      padding: .3rem .5rem;
-      height: 2.5rem;
-      width: 100%;
-    }
-
-    /* ── Buttons ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: .5rem;
-      background: var(--accent);
-      color: #0a0a0a;
-      border: none;
-      border-radius: var(--radius);
-      font-family: 'Space Mono', monospace;
-      font-size: .8rem;
-      font-weight: 700;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      padding: .75rem 1.25rem;
-      cursor: pointer;
-      transition: background .15s, transform .1s;
-      white-space: nowrap;
-    }
-
-    .btn:hover { background: #d4eb3c; }
-    .btn:active { transform: scale(.97); }
-    .btn-full { width: 100%; margin-top: 1rem; }
-
-    .btn-outline {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-      width: 100%;
-      margin-top: .75rem;
-    }
-
-    .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
-
-    /* ── Result ── */
-    #result {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    #result.visible { display: flex; }
-
-    #qr-wrap {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: var(--radius);
-      display: inline-block;
-      position: relative;
-    }
-
-    #qr-wrap canvas, #qr-wrap img { display: block; }
-
-    .corner {
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      border-color: var(--accent);
-      border-style: solid;
-    }
-    .corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
-    .corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
-    .corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
-    .corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
-
-    .result-actions { display: flex; flex-direction: column; width: 100%; gap: .5rem; }
-
-    .status {
-      font-size: .7rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      text-align: center;
-      min-height: 1.2em;
-    }
-
-    footer {
-      margin-top: 2rem;
-      text-align: center;
-      font-size: .65rem;
-      color: var(--muted);
-      letter-spacing: .1em;
-    }
-
-    @keyframes pop {
-      0%   { transform: scale(.9); opacity: 0; }
-      100% { transform: scale(1);  opacity: 1; }
-    }
-
-    #result.visible { animation: pop .25s ease; }
-  </style>
+@media(max-width:680px){
+  .layout{grid-template-columns:1fr;}
+  .preview-panel{position:static;}
+}
+</style>
 </head>
 <body>
 <div class="wrapper">
   <header>
     <p class="tag">// утилита</p>
-    <h1>QR<br><span>генератор</span></h1>
+    <h1>QR <span>генератор</span></h1>
   </header>
 
-  <div class="card">
+  <div class="layout">
+    <!-- LEFT: controls -->
+    <div class="controls-col">
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('text')">Текст / URL</button>
-      <button class="tab-btn"        onclick="switchTab('contact')">Контакт</button>
+      <!-- Tab: mode -->
+      <div class="card">
+        <p class="card-title">// режим</p>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('text')">Текст / URL</button>
+          <button class="tab-btn"        onclick="switchTab('contact')">Контакт</button>
+        </div>
+
+        <!-- Text panel -->
+        <div class="panel active" id="panel-text">
+          <div class="field">
+            <label>Текст или URL</label>
+            <input type="text" id="qr-input" placeholder="https://example.com" autocomplete="off"/>
+          </div>
+        </div>
+
+        <!-- Contact panel -->
+        <div class="panel" id="panel-contact">
+          <div class="row2">
+            <div class="field"><label>Имя</label><input type="text" id="vc-first" placeholder="Иван"/></div>
+            <div class="field"><label>Фамилия</label><input type="text" id="vc-last" placeholder="Иванов"/></div>
+          </div>
+          <div class="field"><label>Компания</label><input type="text" id="vc-org" placeholder="ООО Ромашка"/></div>
+          <div class="field"><label>Должность</label><input type="text" id="vc-title" placeholder="Менеджер"/></div>
+          <div class="row2">
+            <div class="field"><label>Телефон</label><input type="tel" id="vc-phone" placeholder="+7 900 000 00 00"/></div>
+            <div class="field"><label>Доп. телефон</label><input type="tel" id="vc-phone2" placeholder="+7 800…"/></div>
+          </div>
+          <div class="field"><label>Email</label><input type="email" id="vc-email" placeholder="ivan@example.com"/></div>
+          <div class="field"><label>Сайт</label><input type="url" id="vc-url" placeholder="https://example.com"/></div>
+          <div class="field"><label>Адрес</label><input type="text" id="vc-addr" placeholder="Москва, ул. Примерная, 1"/></div>
+          <div class="field"><label>Заметка</label><input type="text" id="vc-note" placeholder="Любой текст"/></div>
+        </div>
+      </div>
+
+      <!-- Colors -->
+      <div class="card">
+        <p class="card-title">// цвета</p>
+        <div class="color-row">
+          <div class="color-field"><label>Код</label><input type="color" id="qr-dark" value="#000000" oninput="liveRender()"/></div>
+          <div class="color-field"><label>Фон</label><input type="color" id="qr-light" value="#ffffff" oninput="liveRender()"/></div>
+        </div>
+        <div class="color-row">
+          <div class="color-field">
+            <label>Уголки (рамка)</label>
+            <input type="color" id="qr-eye-outer" value="#000000" oninput="liveRender()"/>
+          </div>
+          <div class="color-field">
+            <label>Уголки (центр)</label>
+            <input type="color" id="qr-eye-inner" value="#000000" oninput="liveRender()"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shapes -->
+      <div class="card">
+        <p class="card-title">// форма модулей (основная часть)</p>
+        <div class="shape-grid" id="body-shapes">
+          <div class="shape-opt selected" data-body="square" onclick="selectBody(this,'square')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><rect x="2" y="2" width="10" height="10"/><rect x="16" y="2" width="10" height="10"/><rect x="2" y="16" width="10" height="10"/><rect x="16" y="16" width="10" height="10"/></svg>
+            <span>Квадрат</span>
+          </div>
+          <div class="shape-opt" data-body="rounded" onclick="selectBody(this,'rounded')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><rect x="2" y="2" width="10" height="10" rx="3"/><rect x="16" y="2" width="10" height="10" rx="3"/><rect x="2" y="16" width="10" height="10" rx="3"/><rect x="16" y="16" width="10" height="10" rx="3"/></svg>
+            <span>Скругл.</span>
+          </div>
+          <div class="shape-opt" data-body="dot" onclick="selectBody(this,'dot')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><circle cx="7" cy="7" r="5"/><circle cx="21" cy="7" r="5"/><circle cx="7" cy="21" r="5"/><circle cx="21" cy="21" r="5"/></svg>
+            <span>Точка</span>
+          </div>
+          <div class="shape-opt" data-body="diamond" onclick="selectBody(this,'diamond')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><polygon points="7,2 12,7 7,12 2,7"/><polygon points="21,2 26,7 21,12 16,7"/><polygon points="7,16 12,21 7,26 2,21"/><polygon points="21,16 26,21 21,26 16,21"/></svg>
+            <span>Ромб</span>
+          </div>
+          <div class="shape-opt" data-body="star" onclick="selectBody(this,'star')">
+            <svg viewBox="0 0 28 28" fill="currentColor">
+              <polygon points="7,2 8.5,5.5 12,5.5 9.5,8 10.5,12 7,9.5 3.5,12 4.5,8 2,5.5 5.5,5.5"/>
+              <polygon points="21,2 22.5,5.5 26,5.5 23.5,8 24.5,12 21,9.5 17.5,12 18.5,8 16,5.5 19.5,5.5"/>
+              <polygon points="7,16 8.5,19.5 12,19.5 9.5,22 10.5,26 7,23.5 3.5,26 4.5,22 2,19.5 5.5,19.5"/>
+              <polygon points="21,16 22.5,19.5 26,19.5 23.5,22 24.5,26 21,23.5 17.5,26 18.5,22 16,19.5 19.5,19.5"/>
+            </svg>
+            <span>Звезда</span>
+          </div>
+          <div class="shape-opt" data-body="cross" onclick="selectBody(this,'cross')">
+            <svg viewBox="0 0 28 28" fill="currentColor">
+              <path d="M5,2h4v3h3v4H9v3H5V9H2V5h3z"/>
+              <path d="M19,2h4v3h3v4h-3v3h-4V9h-3V5h3z"/>
+              <path d="M5,16h4v3h3v4H9v3H5v-3H2v-4h3z"/>
+              <path d="M19,16h4v3h3v4h-3v3h-4v-3h-3v-4h3z"/>
+            </svg>
+            <span>Крест</span>
+          </div>
+          <div class="shape-opt" data-body="vertical" onclick="selectBody(this,'vertical')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><rect x="4" y="1" width="6" height="12" rx="3"/><rect x="18" y="1" width="6" height="12" rx="3"/><rect x="4" y="15" width="6" height="12" rx="3"/><rect x="18" y="15" width="6" height="12" rx="3"/></svg>
+            <span>Пилюля V</span>
+          </div>
+          <div class="shape-opt" data-body="horizontal" onclick="selectBody(this,'horizontal')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><rect x="1" y="4" width="12" height="6" rx="3"/><rect x="15" y="4" width="12" height="6" rx="3"/><rect x="1" y="18" width="12" height="6" rx="3"/><rect x="15" y="18" width="12" height="6" rx="3"/></svg>
+            <span>Пилюля H</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eye outer shape -->
+      <div class="card">
+        <p class="card-title">// форма рамки уголков</p>
+        <div class="shape-grid" id="eye-outer-shapes">
+          <div class="shape-opt selected" data-eo="square" onclick="selectEyeOuter(this,'square')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="24" height="24"/></svg>
+            <span>Квадрат</span>
+          </div>
+          <div class="shape-opt" data-eo="rounded" onclick="selectEyeOuter(this,'rounded')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="2" width="24" height="24" rx="6"/></svg>
+            <span>Скругл.</span>
+          </div>
+          <div class="shape-opt" data-eo="circle" onclick="selectEyeOuter(this,'circle')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="14" cy="14" r="11"/></svg>
+            <span>Круг</span>
+          </div>
+          <div class="shape-opt" data-eo="leaf" onclick="selectEyeOuter(this,'leaf')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 Q2,26 26,26 Q26,2 2,2Z"/></svg>
+            <span>Лист</span>
+          </div>
+          <div class="shape-opt" data-eo="pointed-top-right" onclick="selectEyeOuter(this,'pointed-top-right')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 L26,2 L26,26 Q2,26 2,2Z"/></svg>
+            <span>Угол →</span>
+          </div>
+          <div class="shape-opt" data-eo="pointed-bottom-left" onclick="selectEyeOuter(this,'pointed-bottom-left')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M2,2 Q26,2 26,26 L2,26 L2,2Z"/></svg>
+            <span>Угол ←</span>
+          </div>
+          <div class="shape-opt" data-eo="diamond" onclick="selectEyeOuter(this,'diamond')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="14,1 27,14 14,27 1,14"/></svg>
+            <span>Ромб</span>
+          </div>
+          <div class="shape-opt" data-eo="rounded-in" onclick="selectEyeOuter(this,'rounded-in')">
+            <svg viewBox="0 0 28 28" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14,2 Q26,2 26,14 Q26,26 14,26 Q2,26 2,14 Q2,2 14,2Z" style="stroke-dasharray:none"/><rect x="2" y="2" width="24" height="24" rx="12" fill="none"/></svg>
+            <span>Вогнутый</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eye inner shape -->
+      <div class="card">
+        <p class="card-title">// форма центра уголков</p>
+        <div class="shape-grid" id="eye-inner-shapes">
+          <div class="shape-opt selected" data-ei="square" onclick="selectEyeInner(this,'square')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><rect x="5" y="5" width="18" height="18"/></svg>
+            <span>Квадрат</span>
+          </div>
+          <div class="shape-opt" data-ei="rounded" onclick="selectEyeInner(this,'rounded')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><rect x="5" y="5" width="18" height="18" rx="5"/></svg>
+            <span>Скругл.</span>
+          </div>
+          <div class="shape-opt" data-ei="circle" onclick="selectEyeInner(this,'circle')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><circle cx="14" cy="14" r="9"/></svg>
+            <span>Круг</span>
+          </div>
+          <div class="shape-opt" data-ei="diamond" onclick="selectEyeInner(this,'diamond')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><polygon points="14,4 24,14 14,24 4,14"/></svg>
+            <span>Ромб</span>
+          </div>
+          <div class="shape-opt" data-ei="star" onclick="selectEyeInner(this,'star')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><polygon points="14,3 17,10 24,10 18.5,15 20.5,22 14,18 7.5,22 9.5,15 4,10 11,10"/></svg>
+            <span>Звезда</span>
+          </div>
+          <div class="shape-opt" data-ei="cross" onclick="selectEyeInner(this,'cross')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><path d="M11,4h6v7h7v6h-7v7h-6v-7H4v-6h7z"/></svg>
+            <span>Крест</span>
+          </div>
+          <div class="shape-opt" data-ei="leaf" onclick="selectEyeInner(this,'leaf')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><path d="M5,5 Q5,23 23,23 Q23,5 5,5Z"/></svg>
+            <span>Лист</span>
+          </div>
+          <div class="shape-opt" data-ei="triangle" onclick="selectEyeInner(this,'triangle')">
+            <svg viewBox="0 0 28 28" fill="currentColor"><polygon points="14,4 25,23 3,23"/></svg>
+            <span>Треугол.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Size / EC -->
+      <div class="card">
+        <p class="card-title">// параметры</p>
+        <div class="row2">
+          <div class="field">
+            <label>Размер (px)</label>
+            <select id="qr-size">
+              <option value="200">200 × 200</option>
+              <option value="300" selected>300 × 300</option>
+              <option value="400">400 × 400</option>
+              <option value="600">600 × 600</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Коррекция</label>
+            <select id="qr-ec">
+              <option value="L">L — низкая</option>
+              <option value="M" selected>M — средняя</option>
+              <option value="Q">Q — высокая</option>
+              <option value="H">H — максимум</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn" onclick="generate()">→ Создать QR-код</button>
+        <p class="status" id="status"></p>
+      </div>
     </div>
 
-    <!-- Panel: Text/URL -->
-    <div class="panel active" id="panel-text">
-      <div class="field" style="margin-bottom:1.5rem">
-        <label for="qr-input">Текст или URL</label>
-        <div class="input-row" style="margin-bottom:0">
-          <input type="text" id="qr-input" placeholder="https://example.com" autocomplete="off" />
+    <!-- RIGHT: preview -->
+    <div class="preview-panel">
+      <div class="preview-card">
+        <p class="card-title" style="align-self:flex-start">// превью</p>
+        <div id="qr-svg-wrap">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <div id="qr-svg-out">
+            <svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+              <rect width="220" height="220" fill="#fff"/>
+              <text x="110" y="118" text-anchor="middle" font-family="monospace" font-size="13" fill="#444">← заполни поля</text>
+            </svg>
+          </div>
+        </div>
+        <div class="preview-actions">
+          <button class="btn" onclick="downloadSVG()">↓ Скачать SVG</button>
+          <button class="btn btn-outline" onclick="downloadPNG()">↓ Скачать PNG</button>
         </div>
       </div>
     </div>
 
-    <!-- Panel: Contact (vCard) -->
-    <div class="panel" id="panel-contact">
-      <div class="vcard-grid">
+  </div><!-- /layout -->
 
-        <div class="field">
-          <label for="vc-first">Имя</label>
-          <input type="text" id="vc-first" placeholder="Иван" />
-        </div>
+  <footer>QR Generator · SVG render · vCard 3.0 · MIT License</footer>
+</div><!-- /wrapper -->
 
-        <div class="field">
-          <label for="vc-last">Фамилия</label>
-          <input type="text" id="vc-last" placeholder="Иванов" />
-        </div>
-
-        <div class="field full">
-          <label for="vc-org">Компания</label>
-          <input type="text" id="vc-org" placeholder="ООО Ромашка" />
-        </div>
-
-        <div class="field full">
-          <label for="vc-title">Должность</label>
-          <input type="text" id="vc-title" placeholder="Менеджер по продажам" />
-        </div>
-
-        <div class="field">
-          <label for="vc-phone">Телефон</label>
-          <input type="tel" id="vc-phone" placeholder="+7 900 000 00 00" />
-        </div>
-
-        <div class="field">
-          <label for="vc-phone2">Доп. телефон</label>
-          <input type="tel" id="vc-phone2" placeholder="+7 800 000 00 00" />
-        </div>
-
-        <div class="field full">
-          <label for="vc-email">Email</label>
-          <input type="email" id="vc-email" placeholder="ivan@example.com" />
-        </div>
-
-        <div class="field full">
-          <label for="vc-url">Сайт</label>
-          <input type="url" id="vc-url" placeholder="https://example.com" />
-        </div>
-
-        <div class="field full">
-          <label for="vc-addr">Адрес</label>
-          <input type="text" id="vc-addr" placeholder="Москва, ул. Примерная, д. 1" />
-        </div>
-
-        <div class="field full">
-          <label for="vc-note">Заметка</label>
-          <input type="text" id="vc-note" placeholder="Любой текст" />
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Shared options -->
-    <div class="options">
-      <div class="field">
-        <label for="qr-size">Размер</label>
-        <select id="qr-size">
-          <option value="128">128 × 128</option>
-          <option value="200" selected>200 × 200</option>
-          <option value="256">256 × 256</option>
-          <option value="400">400 × 400</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="qr-ec">Коррекция ошибок</label>
-        <select id="qr-ec">
-          <option value="L">L — низкая</option>
-          <option value="M" selected>M — средняя</option>
-          <option value="Q">Q — высокая</option>
-          <option value="H">H — максимум</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="qr-dark">Цвет кода</label>
-        <input type="color" id="qr-dark" value="#000000" />
-      </div>
-      <div class="field">
-        <label for="qr-light">Фон</label>
-        <input type="color" id="qr-light" value="#ffffff" />
-      </div>
-    </div>
-
-    <button class="btn btn-full" onclick="generate()">→ Создать QR-код</button>
-    <p class="status" id="status" style="margin-top:.9rem"></p>
-  </div>
-
-  <!-- Result -->
-  <div class="card" id="result">
-    <div id="qr-wrap">
-      <div class="corner corner-tl"></div>
-      <div class="corner corner-tr"></div>
-      <div class="corner corner-bl"></div>
-      <div class="corner corner-br"></div>
-      <div id="qr-output"></div>
-    </div>
-    <div class="result-actions">
-      <button class="btn btn-outline" onclick="downloadQR()">↓ Скачать PNG</button>
-    </div>
-  </div>
-
-  <footer>QR Generator · vCard 3.0 · qrcodejs · MIT License</footer>
-</div>
+<!-- Hidden canvas for PNG export -->
+<canvas id="export-canvas" style="display:none"></canvas>
 
 <script>
+// ── State ──────────────────────────────────────────────────────────
 let currentTab = 'text';
+let bodyShape  = 'square';
+let eyeOuter   = 'square';
+let eyeInner   = 'square';
+let lastSvgString = '';
 
+// ── Tab switching ──────────────────────────────────────────────────
 function switchTab(tab) {
   currentTab = tab;
-  document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', (i === 0 && tab === 'text') || (i === 1 && tab === 'contact'));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active',(i===0&&tab==='text')||(i===1&&tab==='contact'));
   });
-  document.getElementById('panel-text').classList.toggle('active', tab === 'text');
-  document.getElementById('panel-contact').classList.toggle('active', tab === 'contact');
-
-  // For contacts use H level (logo overlay-safe), pre-select
-  if (tab === 'contact') {
-    document.getElementById('qr-ec').value = 'M';
-  }
-
-  // hide result on tab switch
-  document.getElementById('result').classList.remove('visible');
-  document.getElementById('status').textContent = '';
+  document.getElementById('panel-text').classList.toggle('active',tab==='text');
+  document.getElementById('panel-contact').classList.toggle('active',tab==='contact');
+  document.getElementById('status').textContent='';
 }
 
+// ── Shape selectors ────────────────────────────────────────────────
+function selectBody(el,val){ bodyShape=val; pickShape('#body-shapes',el); liveRender(); }
+function selectEyeOuter(el,val){ eyeOuter=val; pickShape('#eye-outer-shapes',el); liveRender(); }
+function selectEyeInner(el,val){ eyeInner=val; pickShape('#eye-inner-shapes',el); liveRender(); }
+function pickShape(container,el){
+  document.querySelectorAll(container+' .shape-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+// ── vCard builder ──────────────────────────────────────────────────
 function buildVCard() {
-  const v  = id => document.getElementById(id).value.trim();
-  const first  = v('vc-first');
-  const last   = v('vc-last');
-  const org    = v('vc-org');
-  const title  = v('vc-title');
-  const phone  = v('vc-phone');
-  const phone2 = v('vc-phone2');
-  const email  = v('vc-email');
-  const url    = v('vc-url');
-  const addr   = v('vc-addr');
-  const note   = v('vc-note');
-
-  if (!first && !last && !phone && !email) return null;
-
-  const fullName = [first, last].filter(Boolean).join(' ');
-
-  let card = 'BEGIN:VCARD\r\nVERSION:3.0\r\n';
-  card += `N:${last};${first};;;\r\n`;
-  card += `FN:${fullName}\r\n`;
-  if (org)    card += `ORG:${org}\r\n`;
-  if (title)  card += `TITLE:${title}\r\n`;
-  if (phone)  card += `TEL;TYPE=CELL:${phone}\r\n`;
-  if (phone2) card += `TEL;TYPE=WORK:${phone2}\r\n`;
-  if (email)  card += `EMAIL:${email}\r\n`;
-  if (url)    card += `URL:${url}\r\n`;
-  if (addr)   card += `ADR;TYPE=WORK:;;${addr};;;;\r\n`;
-  if (note)   card += `NOTE:${note}\r\n`;
-  card += 'END:VCARD';
-  return card;
+  const v = id => document.getElementById(id).value.trim();
+  const first=v('vc-first'),last=v('vc-last'),org=v('vc-org'),title=v('vc-title');
+  const phone=v('vc-phone'),phone2=v('vc-phone2'),email=v('vc-email');
+  const url=v('vc-url'),addr=v('vc-addr'),note=v('vc-note');
+  if(!first&&!last&&!phone&&!email) return null;
+  const fn=[first,last].filter(Boolean).join(' ');
+  let c='BEGIN:VCARD\r\nVERSION:3.0\r\n';
+  c+=`N:${last};${first};;;\r\nFN:${fn}\r\n`;
+  if(org)    c+=`ORG:${org}\r\n`;
+  if(title)  c+=`TITLE:${title}\r\n`;
+  if(phone)  c+=`TEL;TYPE=CELL:${phone}\r\n`;
+  if(phone2) c+=`TEL;TYPE=WORK:${phone2}\r\n`;
+  if(email)  c+=`EMAIL:${email}\r\n`;
+  if(url)    c+=`URL:${url}\r\n`;
+  if(addr)   c+=`ADR;TYPE=WORK:;;${addr};;;;\r\n`;
+  if(note)   c+=`NOTE:${note}\r\n`;
+  c+='END:VCARD';
+  return c;
 }
 
-function ecLevel(val) {
-  return { L: QRCode.CorrectLevel.L, M: QRCode.CorrectLevel.M, Q: QRCode.CorrectLevel.Q, H: QRCode.CorrectLevel.H }[val];
-}
-
-function generate() {
-  const status = document.getElementById('status');
-  let text;
-
-  if (currentTab === 'text') {
-    text = document.getElementById('qr-input').value.trim();
-    if (!text) {
-      status.style.color = 'var(--accent2)';
-      status.textContent = '// введите текст или URL';
-      return;
-    }
-  } else {
-    text = buildVCard();
-    if (!text) {
-      status.style.color = 'var(--accent2)';
-      status.textContent = '// заполните хотя бы имя, телефон или email';
-      return;
+// ── QR matrix via qrcodejs ─────────────────────────────────────────
+function getQRMatrix(text, ecLevel) {
+  const container = document.createElement('div');
+  container.style.display='none';
+  document.body.appendChild(container);
+  new QRCode(container,{text,width:256,height:256,correctLevel:QRCode.CorrectLevel[ecLevel]});
+  const canvas = container.querySelector('canvas');
+  if(!canvas){document.body.removeChild(container);return null;}
+  const ctx = canvas.getContext('2d');
+  const size = canvas.width;
+  const imgData = ctx.getImageData(0,0,size,size).data;
+  // detect module size
+  let modSize=1;
+  for(let x=0;x<size;x++){
+    const i=(x)*4;
+    if(imgData[i]<128){modSize=x||1;break;}
+  }
+  // find QR start (skip quiet zone)
+  let qStart=0;
+  for(let x=0;x<size;x++){
+    const i=(x)*4;
+    if(imgData[i]<128){qStart=0;break;}
+    qStart=x+1;
+  }
+  const modules = Math.round(size/modSize);
+  const matrix=[];
+  for(let r=0;r<modules;r++){
+    matrix[r]=[];
+    for(let c=0;c<modules;c++){
+      const px=Math.floor(c*modSize+modSize/2);
+      const py=Math.floor(r*modSize+modSize/2);
+      const idx=(py*size+px)*4;
+      matrix[r][c]=imgData[idx]<128;
     }
   }
+  document.body.removeChild(container);
+  return matrix;
+}
 
-  const size  = parseInt(document.getElementById('qr-size').value);
-  const ec    = document.getElementById('qr-ec').value;
+// ── Eye detection ──────────────────────────────────────────────────
+function isEyeModule(r,c,N){
+  // top-left eye: rows 0-6, cols 0-6
+  if(r<=6&&c<=6) return true;
+  // top-right eye: rows 0-6, cols N-7..N-1
+  if(r<=6&&c>=N-7) return true;
+  // bottom-left eye: rows N-7..N-1, cols 0-6
+  if(r>=N-7&&c<=6) return true;
+  return false;
+}
+function eyeZone(r,c,N){
+  if(r<=6&&c<=6)   return 'tl';
+  if(r<=6&&c>=N-7) return 'tr';
+  if(r>=N-7&&c<=6) return 'bl';
+  return null;
+}
+
+// ── SVG path builders for body modules ────────────────────────────
+function bodyPath(x,y,s,shape){
+  const h=s/2,r3=s*0.3,r5=s*0.5;
+  switch(shape){
+    case 'rounded': return `M${x+r3},${y} h${s-2*r3} q${r3},0 ${r3},${r3} v${s-2*r3} q0,${r3} -${r3},${r3} h-${s-2*r3} q-${r3},0 -${r3},-${r3} v-${s-2*r3} q0,-${r3} ${r3},-${r3}Z`;
+    case 'dot':     return `M${x+r5},${y} a${r5},${r5} 0 1 1 -0.001,0Z`;
+    case 'diamond': return `M${x+h},${y} L${x+s},${y+h} L${x+h},${y+s} L${x},${y+h}Z`;
+    case 'star':    return starPath(x+h,y+h,r5*0.95,r5*0.4,5);
+    case 'cross':   {const t=s*0.3,u=(s-t)/2; return `M${x+u},${y} h${t} v${u} h${u} v${t} h-${u} v${u} h-${t} v-${u} h-${u} v-${t} h${u}Z`;}
+    case 'vertical':{const rr=s*0.45; return `M${x+h},${y} q${h},0 ${h},${rr} v${s-2*rr} q0,${rr} -${h},${rr} q-${h},0 -${h},-${rr} v-${s-2*rr} q0,-${rr} ${h},-${rr}Z`;}
+    case 'horizontal':{const rr=s*0.45; return `M${x},${y+h} q0,-${h} ${rr},-${h} h${s-2*rr} q${rr},0 ${rr},${h} q0,${h} -${rr},${h} h-${s-2*rr} q-${rr},0 -${rr},-${h}Z`;}
+    default:        return `M${x},${y} h${s} v${s} h-${s}Z`; // square
+  }
+}
+
+function starPath(cx,cy,R,r,pts){
+  let d='';
+  for(let i=0;i<pts*2;i++){
+    const angle=Math.PI/pts*i - Math.PI/2;
+    const rad=i%2===0?R:r;
+    const px=cx+rad*Math.cos(angle),py=cy+rad*Math.sin(angle);
+    d+=(i===0?'M':'L')+px+','+py;
+  }
+  return d+'Z';
+}
+
+// ── SVG path for eye frame ─────────────────────────────────────────
+function eyeOuterPath(ox,oy,cell,shape){
+  const S=7*cell, b=cell; // outer border, inner hole start at b
+  const inner=5*cell; // inner hole size
+  switch(shape){
+    case 'rounded':{
+      const ro=cell*1.5, ri=cell*0.8;
+      const outer=`M${ox+ro},${oy} h${S-2*ro} q${ro},0 ${ro},${ro} v${S-2*ro} q0,${ro} -${ro},${ro} h-${S-2*ro} q-${ro},0 -${ro},-${ro} v-${S-2*ro} q0,-${ro} ${ro},-${ro}Z`;
+      const hole =`M${ox+b+ri},${oy+b} h${inner-2*ri} q${ri},0 ${ri},${ri} v${inner-2*ri} q0,${ri} -${ri},${ri} h-${inner-2*ri} q-${ri},0 -${ri},-${ri} v-${inner-2*ri} q0,-${ri} ${ri},-${ri}Z`;
+      return outer+' '+hole;
+    }
+    case 'circle':{
+      const R=S/2, r=inner/2;
+      return `M${ox+R},${oy} a${R},${R} 0 1 1 -0.001,0Z M${ox+b+r},${oy+b} a${r},${r} 0 1 1 -0.001,0Z`;
+    }
+    case 'leaf':{
+      const outer=`M${ox},${oy} Q${ox},${oy+S} ${ox+S},${oy+S} Q${ox+S},${oy} ${ox},${oy}Z`;
+      const hole =`M${ox+b},${oy+b} Q${ox+b},${oy+b+inner} ${ox+b+inner},${oy+b+inner} Q${ox+b+inner},${oy+b} ${ox+b},${oy+b}Z`;
+      return outer+' '+hole;
+    }
+    case 'pointed-top-right':{
+      const outer=`M${ox},${oy} L${ox+S},${oy} L${ox+S},${oy+S} Q${ox},${oy+S} ${ox},${oy}Z`;
+      const hole =`M${ox+b},${oy+b} L${ox+b+inner},${oy+b} L${ox+b+inner},${oy+b+inner} Q${ox+b},${oy+b+inner} ${ox+b},${oy+b}Z`;
+      return outer+' '+hole;
+    }
+    case 'pointed-bottom-left':{
+      const outer=`M${ox},${oy} Q${ox+S},${oy} ${ox+S},${oy+S} L${ox},${oy+S} L${ox},${oy}Z`;
+      const hole =`M${ox+b},${oy+b} Q${ox+b+inner},${oy+b} ${ox+b+inner},${oy+b+inner} L${ox+b},${oy+b+inner} L${ox+b},${oy+b}Z`;
+      return outer+' '+hole;
+    }
+    case 'diamond':{
+      const h=S/2, ih=inner/2;
+      const outer=`M${ox+h},${oy} L${ox+S},${oy+h} L${ox+h},${oy+S} L${ox},${oy+h}Z`;
+      const hole =`M${ox+h},${oy+b} L${ox+S-b},${oy+h} L${ox+h},${oy+S-b} L${ox+b},${oy+h}Z`;
+      return outer+' '+hole;
+    }
+    case 'rounded-in':{
+      const outer=`M${ox+S/2},${oy} Q${ox+S},${oy} ${ox+S},${oy+S/2} Q${ox+S},${oy+S} ${ox+S/2},${oy+S} Q${ox},${oy+S} ${ox},${oy+S/2} Q${ox},${oy} ${ox+S/2},${oy}Z`;
+      const r2=inner/2;
+      const hole=`M${ox+b+r2},${oy+b} a${r2},${r2} 0 1 1 -0.001,0Z`;
+      return outer+' '+hole;
+    }
+    default:{ // square
+      return `M${ox},${oy} h${S} v${S} h-${S}Z M${ox+b},${oy+b} h${inner} v${inner} h-${inner}Z`;
+    }
+  }
+}
+
+// ── SVG path for eye center ────────────────────────────────────────
+function eyeInnerPath(ox,oy,cell,shape){
+  // inner square is 3x3 modules starting at offset 2*cell
+  const ix=ox+2*cell, iy=oy+2*cell, S=3*cell, h=S/2;
+  switch(shape){
+    case 'rounded': {const r=cell*0.7; return `M${ix+r},${iy} h${S-2*r} q${r},0 ${r},${r} v${S-2*r} q0,${r} -${r},${r} h-${S-2*r} q-${r},0 -${r},-${r} v-${S-2*r} q0,-${r} ${r},-${r}Z`;}
+    case 'circle':  return `M${ix+h},${iy} a${h},${h} 0 1 1 -0.001,0Z`;
+    case 'diamond': return `M${ix+h},${iy} L${ix+S},${iy+h} L${ix+h},${iy+S} L${ix},${iy+h}Z`;
+    case 'star':    return starPath(ix+h,iy+h,h*0.95,h*0.4,5);
+    case 'cross':   {const t=S*0.35,u=(S-t)/2; return `M${ix+u},${iy} h${t} v${u} h${u} v${t} h-${u} v${u} h-${t} v-${u} h-${u} v-${t} h${u}Z`;}
+    case 'leaf':    return `M${ix},${iy} Q${ix},${iy+S} ${ix+S},${iy+S} Q${ix+S},${iy} ${ix},${iy}Z`;
+    case 'triangle':return `M${ix+h},${iy} L${ix+S},${iy+S} L${ix},${iy+S}Z`;
+    default:        return `M${ix},${iy} h${S} v${S} h-${S}Z`;
+  }
+}
+
+// ── Main SVG renderer ──────────────────────────────────────────────
+function renderSVG(matrix) {
+  const N    = matrix.length;
+  const cell = 10; // SVG units per module
+  const quiet = 4 * cell;
+  const total = N * cell + 2 * quiet;
   const dark  = document.getElementById('qr-dark').value;
   const light = document.getElementById('qr-light').value;
+  const eyeOuterColor = document.getElementById('qr-eye-outer').value;
+  const eyeInnerColor = document.getElementById('qr-eye-inner').value;
 
-  const out = document.getElementById('qr-output');
-  out.innerHTML = '';
+  // Eyes positions (top-left corner of each 7×7 eye in module coords)
+  const eyePositions=[
+    {r:0,c:0},{r:0,c:N-7},{r:N-7,c:0}
+  ];
 
-  new QRCode(out, {
-    text,
-    width: size,
-    height: size,
-    colorDark: dark,
-    colorLight: light,
-    correctLevel: ecLevel(ec),
-  });
+  // Collect body paths (non-eye dark modules)
+  let bodyD='';
+  for(let r=0;r<N;r++){
+    for(let c=0;c<N;c++){
+      if(!matrix[r][c]) continue;
+      if(isEyeModule(r,c,N)) continue;
+      const x=quiet+c*cell, y=quiet+r*cell;
+      bodyD+=bodyPath(x,y,cell,bodyShape)+' ';
+    }
+  }
 
-  const label = currentTab === 'contact' ? 'vCard · ' : '';
-  status.style.color = 'var(--accent)';
-  status.textContent = `// готово · ${label}${size}×${size}px`;
+  // Build eye SVG elements
+  let eyeOuterPaths='', eyeInnerPaths='';
+  for(const {r,c} of eyePositions){
+    const ox=quiet+c*cell, oy=quiet+r*cell;
+    eyeOuterPaths+=`<path d="${eyeOuterPath(ox,oy,cell,eyeOuter)}" fill="${eyeOuterColor}" fill-rule="evenodd"/>`;
+    eyeInnerPaths+=`<path d="${eyeInnerPath(ox,oy,cell,eyeInner)}" fill="${eyeInnerColor}"/>`;
+  }
 
-  const result = document.getElementById('result');
-  result.classList.remove('visible');
-  void result.offsetWidth;
-  result.classList.add('visible');
+  const svg=`<svg width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+  <rect width="${total}" height="${total}" fill="${light}"/>
+  <path d="${bodyD}" fill="${dark}" fill-rule="nonzero"/>
+  ${eyeOuterPaths}
+  ${eyeInnerPaths}
+</svg>`;
+  return svg;
 }
 
-function downloadQR() {
-  const canvas = document.querySelector('#qr-output canvas');
-  if (!canvas) return;
-  const link = document.createElement('a');
-  link.download = currentTab === 'contact' ? 'contact-qr.png' : 'qrcode.png';
-  link.href = canvas.toDataURL('image/png');
-  link.click();
+// ── Generate & render ──────────────────────────────────────────────
+function generate() {
+  const status=document.getElementById('status');
+  let text;
+  if(currentTab==='text'){
+    text=document.getElementById('qr-input').value.trim();
+    if(!text){status.style.color='var(--accent2)';status.textContent='// введите текст или URL';return;}
+  } else {
+    text=buildVCard();
+    if(!text){status.style.color='var(--accent2)';status.textContent='// заполните хотя бы имя, телефон или email';return;}
+  }
+  const ec=document.getElementById('qr-ec').value;
+  const matrix=getQRMatrix(text,ec);
+  if(!matrix){status.style.color='var(--accent2)';status.textContent='// ошибка генерации';return;}
+  const svg=renderSVG(matrix);
+  lastSvgString=svg;
+  document.getElementById('qr-svg-out').innerHTML=svg;
+  // scale preview to ~220px
+  const svgEl=document.querySelector('#qr-svg-out svg');
+  if(svgEl){const nat=parseInt(svgEl.getAttribute('width'));const scale=Math.min(220/nat,1);svgEl.style.width=svgEl.style.height=(nat*scale)+'px';}
+  status.style.color='var(--accent)';
+  const label=currentTab==='contact'?'vCard · ':'';
+  status.textContent=`// готово · ${label}${matrix.length}×${matrix.length} модулей`;
 }
 
-document.getElementById('qr-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') generate();
-});
+function liveRender(){
+  if(!lastSvgString) return;
+  // re-render with same matrix — just regenerate
+  const status=document.getElementById('status');
+  const prev=status.textContent;
+  generate();
+  // restore status if text didn't change
+}
+
+// ── Download ───────────────────────────────────────────────────────
+function downloadSVG(){
+  if(!lastSvgString) return;
+  const size=parseInt(document.getElementById('qr-size').value);
+  // inject proper width/height
+  const sized=lastSvgString.replace(/width="\d+" height="\d+"/,`width="${size}" height="${size}"`);
+  const blob=new Blob([sized],{type:'image/svg+xml'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=currentTab==='contact'?'contact-qr.svg':'qrcode.svg';
+  a.click();
+}
+
+function downloadPNG(){
+  if(!lastSvgString) return;
+  const size=parseInt(document.getElementById('qr-size').value);
+  const sized=lastSvgString.replace(/width="\d+" height="\d+"/,`width="${size}" height="${size}"`);
+  const blob=new Blob([sized],{type:'image/svg+xml'});
+  const url=URL.createObjectURL(blob);
+  const img=new Image();
+  img.onload=()=>{
+    const canvas=document.getElementById('export-canvas');
+    canvas.width=size;canvas.height=size;
+    const ctx=canvas.getContext('2d');
+    ctx.drawImage(img,0,0,size,size);
+    URL.revokeObjectURL(url);
+    const a=document.createElement('a');
+    a.download=currentTab==='contact'?'contact-qr.png':'qrcode.png';
+    a.href=canvas.toDataURL('image/png');
+    a.click();
+  };
+  img.src=url;
+}
+
+// Enter in text field
+document.getElementById('qr-input').addEventListener('keydown',e=>{if(e.key==='Enter')generate();});
 </script>
 </body>
 </html>
