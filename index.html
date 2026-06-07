@@ -11,14 +11,14 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0a0a0a;
-      --surface:  #111111;
-      --border:   #2a2a2a;
-      --accent:   #e8ff47;
-      --accent2:  #ff4757;
-      --text:     #f0f0f0;
-      --muted:    #666;
-      --radius:   4px;
+      --bg:      #0a0a0a;
+      --surface: #111111;
+      --border:  #2a2a2a;
+      --accent:  #e8ff47;
+      --accent2: #ff4757;
+      --text:    #f0f0f0;
+      --muted:   #666;
+      --radius:  4px;
     }
 
     body {
@@ -33,7 +33,6 @@
       overflow-x: hidden;
     }
 
-    /* grid background */
     body::before {
       content: '';
       position: fixed;
@@ -53,9 +52,7 @@
       max-width: 560px;
     }
 
-    header {
-      margin-bottom: 2.5rem;
-    }
+    header { margin-bottom: 2.5rem; }
 
     .tag {
       font-size: .65rem;
@@ -73,11 +70,7 @@
       letter-spacing: -.02em;
     }
 
-    h1 span {
-      color: var(--accent);
-      display: inline-block;
-      position: relative;
-    }
+    h1 span { color: var(--accent); }
 
     .card {
       background: var(--surface);
@@ -87,13 +80,51 @@
       margin-bottom: 1.5rem;
     }
 
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 1.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'Space Mono', monospace;
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: .65rem .5rem;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      border-right: 1px solid var(--border);
+    }
+
+    .tab-btn:last-child { border-right: none; }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #0a0a0a;
+      font-weight: 700;
+    }
+
+    /* ── Panels ── */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* ── Inputs ── */
     label {
       display: block;
       font-size: .7rem;
       letter-spacing: .15em;
       color: var(--muted);
       text-transform: uppercase;
-      margin-bottom: .6rem;
+      margin-bottom: .5rem;
     }
 
     .input-row {
@@ -103,7 +134,10 @@
       margin-bottom: 1.5rem;
     }
 
-    input[type="text"] {
+    input[type="text"],
+    input[type="tel"],
+    input[type="email"],
+    input[type="url"] {
       flex: 1;
       background: var(--bg);
       border: 1px solid var(--border);
@@ -114,22 +148,37 @@
       padding: .75rem 1rem;
       outline: none;
       transition: border-color .2s;
+      width: 100%;
     }
 
-    input[type="text"]:focus {
-      border-color: var(--accent);
+    input[type="text"]:focus,
+    input[type="tel"]:focus,
+    input[type="email"]:focus,
+    input[type="url"]:focus { border-color: var(--accent); }
+
+    input::placeholder { color: var(--muted); }
+
+    /* vCard grid */
+    .vcard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .85rem;
+      margin-bottom: 1.25rem;
     }
 
-    input[type="text"]::placeholder { color: var(--muted); }
+    .vcard-grid .full { grid-column: 1 / -1; }
 
+    .field { display: flex; flex-direction: column; gap: .5rem; }
+
+    /* options row */
     .options {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1rem;
       margin-bottom: 1.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--border);
     }
-
-    .field { display: flex; flex-direction: column; }
 
     select, input[type="color"] {
       background: var(--bg);
@@ -152,6 +201,7 @@
       width: 100%;
     }
 
+    /* ── Buttons ── */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -174,6 +224,7 @@
 
     .btn:hover { background: #d4eb3c; }
     .btn:active { transform: scale(.97); }
+    .btn-full { width: 100%; margin-top: 1rem; }
 
     .btn-outline {
       background: transparent;
@@ -185,7 +236,7 @@
 
     .btn-outline:hover { border-color: var(--accent); color: var(--accent); background: transparent; }
 
-    /* QR result */
+    /* ── Result ── */
     #result {
       display: none;
       flex-direction: column;
@@ -203,9 +254,7 @@
       position: relative;
     }
 
-    #qr-wrap canvas, #qr-wrap img {
-      display: block;
-    }
+    #qr-wrap canvas, #qr-wrap img { display: block; }
 
     .corner {
       position: absolute;
@@ -239,8 +288,8 @@
     }
 
     @keyframes pop {
-      0% { transform: scale(.9); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+      0%   { transform: scale(.9); opacity: 0; }
+      100% { transform: scale(1);  opacity: 1; }
     }
 
     #result.visible { animation: pop .25s ease; }
@@ -254,12 +303,81 @@
   </header>
 
   <div class="card">
-    <label for="qr-input">Текст или URL</label>
-    <div class="input-row">
-      <input type="text" id="qr-input" placeholder="https://example.com" autocomplete="off" />
-      <button class="btn" onclick="generate()">→ Создать</button>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('text')">Текст / URL</button>
+      <button class="tab-btn"        onclick="switchTab('contact')">Контакт</button>
     </div>
 
+    <!-- Panel: Text/URL -->
+    <div class="panel active" id="panel-text">
+      <div class="field" style="margin-bottom:1.5rem">
+        <label for="qr-input">Текст или URL</label>
+        <div class="input-row" style="margin-bottom:0">
+          <input type="text" id="qr-input" placeholder="https://example.com" autocomplete="off" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel: Contact (vCard) -->
+    <div class="panel" id="panel-contact">
+      <div class="vcard-grid">
+
+        <div class="field">
+          <label for="vc-first">Имя</label>
+          <input type="text" id="vc-first" placeholder="Иван" />
+        </div>
+
+        <div class="field">
+          <label for="vc-last">Фамилия</label>
+          <input type="text" id="vc-last" placeholder="Иванов" />
+        </div>
+
+        <div class="field full">
+          <label for="vc-org">Компания</label>
+          <input type="text" id="vc-org" placeholder="ООО Ромашка" />
+        </div>
+
+        <div class="field full">
+          <label for="vc-title">Должность</label>
+          <input type="text" id="vc-title" placeholder="Менеджер по продажам" />
+        </div>
+
+        <div class="field">
+          <label for="vc-phone">Телефон</label>
+          <input type="tel" id="vc-phone" placeholder="+7 900 000 00 00" />
+        </div>
+
+        <div class="field">
+          <label for="vc-phone2">Доп. телефон</label>
+          <input type="tel" id="vc-phone2" placeholder="+7 800 000 00 00" />
+        </div>
+
+        <div class="field full">
+          <label for="vc-email">Email</label>
+          <input type="email" id="vc-email" placeholder="ivan@example.com" />
+        </div>
+
+        <div class="field full">
+          <label for="vc-url">Сайт</label>
+          <input type="url" id="vc-url" placeholder="https://example.com" />
+        </div>
+
+        <div class="field full">
+          <label for="vc-addr">Адрес</label>
+          <input type="text" id="vc-addr" placeholder="Москва, ул. Примерная, д. 1" />
+        </div>
+
+        <div class="field full">
+          <label for="vc-note">Заметка</label>
+          <input type="text" id="vc-note" placeholder="Любой текст" />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Shared options -->
     <div class="options">
       <div class="field">
         <label for="qr-size">Размер</label>
@@ -289,9 +407,11 @@
       </div>
     </div>
 
-    <p class="status" id="status"></p>
+    <button class="btn btn-full" onclick="generate()">→ Создать QR-код</button>
+    <p class="status" id="status" style="margin-top:.9rem"></p>
   </div>
 
+  <!-- Result -->
   <div class="card" id="result">
     <div id="qr-wrap">
       <div class="corner corner-tl"></div>
@@ -305,35 +425,95 @@
     </div>
   </div>
 
-  <footer>QR Generator · made with qrcodejs · MIT License</footer>
+  <footer>QR Generator · vCard 3.0 · qrcodejs · MIT License</footer>
 </div>
 
 <script>
-let qr = null;
+let currentTab = 'text';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'text') || (i === 1 && tab === 'contact'));
+  });
+  document.getElementById('panel-text').classList.toggle('active', tab === 'text');
+  document.getElementById('panel-contact').classList.toggle('active', tab === 'contact');
+
+  // For contacts use H level (logo overlay-safe), pre-select
+  if (tab === 'contact') {
+    document.getElementById('qr-ec').value = 'M';
+  }
+
+  // hide result on tab switch
+  document.getElementById('result').classList.remove('visible');
+  document.getElementById('status').textContent = '';
+}
+
+function buildVCard() {
+  const v  = id => document.getElementById(id).value.trim();
+  const first  = v('vc-first');
+  const last   = v('vc-last');
+  const org    = v('vc-org');
+  const title  = v('vc-title');
+  const phone  = v('vc-phone');
+  const phone2 = v('vc-phone2');
+  const email  = v('vc-email');
+  const url    = v('vc-url');
+  const addr   = v('vc-addr');
+  const note   = v('vc-note');
+
+  if (!first && !last && !phone && !email) return null;
+
+  const fullName = [first, last].filter(Boolean).join(' ');
+
+  let card = 'BEGIN:VCARD\r\nVERSION:3.0\r\n';
+  card += `N:${last};${first};;;\r\n`;
+  card += `FN:${fullName}\r\n`;
+  if (org)    card += `ORG:${org}\r\n`;
+  if (title)  card += `TITLE:${title}\r\n`;
+  if (phone)  card += `TEL;TYPE=CELL:${phone}\r\n`;
+  if (phone2) card += `TEL;TYPE=WORK:${phone2}\r\n`;
+  if (email)  card += `EMAIL:${email}\r\n`;
+  if (url)    card += `URL:${url}\r\n`;
+  if (addr)   card += `ADR;TYPE=WORK:;;${addr};;;;\r\n`;
+  if (note)   card += `NOTE:${note}\r\n`;
+  card += 'END:VCARD';
+  return card;
+}
 
 function ecLevel(val) {
   return { L: QRCode.CorrectLevel.L, M: QRCode.CorrectLevel.M, Q: QRCode.CorrectLevel.Q, H: QRCode.CorrectLevel.H }[val];
 }
 
 function generate() {
-  const text = document.getElementById('qr-input').value.trim();
   const status = document.getElementById('status');
+  let text;
 
-  if (!text) {
-    status.style.color = 'var(--accent2)';
-    status.textContent = '// введите текст или URL';
-    return;
+  if (currentTab === 'text') {
+    text = document.getElementById('qr-input').value.trim();
+    if (!text) {
+      status.style.color = 'var(--accent2)';
+      status.textContent = '// введите текст или URL';
+      return;
+    }
+  } else {
+    text = buildVCard();
+    if (!text) {
+      status.style.color = 'var(--accent2)';
+      status.textContent = '// заполните хотя бы имя, телефон или email';
+      return;
+    }
   }
 
-  const size   = parseInt(document.getElementById('qr-size').value);
-  const ec     = document.getElementById('qr-ec').value;
-  const dark   = document.getElementById('qr-dark').value;
-  const light  = document.getElementById('qr-light').value;
+  const size  = parseInt(document.getElementById('qr-size').value);
+  const ec    = document.getElementById('qr-ec').value;
+  const dark  = document.getElementById('qr-dark').value;
+  const light = document.getElementById('qr-light').value;
 
   const out = document.getElementById('qr-output');
   out.innerHTML = '';
 
-  qr = new QRCode(out, {
+  new QRCode(out, {
     text,
     width: size,
     height: size,
@@ -342,12 +522,13 @@ function generate() {
     correctLevel: ecLevel(ec),
   });
 
+  const label = currentTab === 'contact' ? 'vCard · ' : '';
   status.style.color = 'var(--accent)';
-  status.textContent = `// готово · ${size}×${size}px`;
+  status.textContent = `// готово · ${label}${size}×${size}px`;
 
   const result = document.getElementById('result');
   result.classList.remove('visible');
-  void result.offsetWidth; // reflow for re-animation
+  void result.offsetWidth;
   result.classList.add('visible');
 }
 
@@ -355,7 +536,7 @@ function downloadQR() {
   const canvas = document.querySelector('#qr-output canvas');
   if (!canvas) return;
   const link = document.createElement('a');
-  link.download = 'qrcode.png';
+  link.download = currentTab === 'contact' ? 'contact-qr.png' : 'qrcode.png';
   link.href = canvas.toDataURL('image/png');
   link.click();
 }
